@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('movies', function (Blueprint $table) {
+            $table->id();
+            $table->string('title', 255)->index();
+            $table->text('description')->nullable();
+            $table->unsignedInteger('duration_minutes');
+            $table->string('genre', 100)->nullable();
+            $table->enum('age_rating', ['P', 'K', 'T13', 'T16', 'T18'])->default('P');
+            $table->string('poster_url', 500)->nullable();
+            $table->enum('status', ['showing', 'coming_soon', 'ended'])->default('coming_soon')->index();
+            $table->date('release_date')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('movies');
+    }
+};

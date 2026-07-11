@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Showtime;
+use App\Models\Movie;
+use Carbon\Carbon;
+
+class StaffController extends Controller
+{
+    public function counter(Request $request)
+    {
+        $date = $request->query('date', Carbon::today()->toDateString());
+        
+        $showtimes = Showtime::with(['movie', 'room'])
+            ->whereDate('start_time', $date)
+            ->where('status', 'scheduled')
+            ->orderBy('start_time', 'asc')
+            ->get();
+            
+        $showtimeId = $request->query('showtime_id');
+        $selectedShowtime = null;
+        $seats = null;
+        
+        if ($showtimeId) {
+            $selectedShowtime = Showtime::with(['movie', 'room'])->findOrFail($showtimeId);
+            $seats = \App\Models\ShowtimeSeat::with('seat')
+                ->where('showtime_id', $showtimeId)
+                ->get()
+                ->map(function ($ss) {
+                    $status = $ss->status;
+                    if ($status === 'holding' && $ss->hold_expires_at && $ss->hold_expires_at->isPast()) {
+                        $status = 'available';
+                    }
+                    return [
+                        'id' => $ss->id,
+                        'seat_id' => $ss->seat_id,
+                        'row' => $ss->seat->row ?? $ss->seat->seat_row,
+                        'number' => $ss->seat->number ?? $ss->seat->seat_number,
+                        'type' => $ss->seat->type ?? $ss->seat->seat_type,
+                        'status' => $status,
+                        'price' => ($ss->seat->type ?? $ss->seat->seat_type) === 'vip' ? $ss->showtime->price_vip : $ss->showtime->price_standard,
+                    ];
+                });
+        }
+        
+        return view('staff.counter', compact('date', 'showtimes', 'selectedShowtime', 'seats'));
+    }
+
+    public function checkin()
+    {
+        return view('staff.checkin');
+    }
+}
