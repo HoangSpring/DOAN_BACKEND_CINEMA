@@ -1,22 +1,22 @@
 @extends('layouts.customer')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8" x-data="seatSelector()">
+    <div class="container mx-auto px-4 py-8 font-body" x-data="seatSelector()">
         <div
-            class="bg-slate-900 border border-slate-800 shadow-2xl shadow-slate-900/50 rounded-2xl p-6 mb-12 flex flex-col lg:flex-row gap-8 relative overflow-hidden">
+            class="bg-dark-card border border-dark-border shadow-2xl shadow-slate-900/50 rounded-2xl p-6 mb-12 flex flex-col lg:flex-row gap-8 relative overflow-hidden liquid-glass">
             <div
                 class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none">
             </div>
 
             <!-- Movie Poster -->
-            <div class="relative z-10 w-32 sm:w-48 shrink-0 mx-auto lg:mx-0">
-                <img src="{{ $showtime->movie->poster_url ?? 'https://via.placeholder.com/300x450' }}" alt="{{ $showtime->movie->title }}" class="w-full rounded-xl shadow-lg border border-white/10 object-cover aspect-[2/3]">
+            <div class="relative z-10 w-32 sm:w-48 shrink-0 mx-auto lg:mx-0 poster-card border-none">
+                <img src="{{ $showtime->movie->poster_url ?? 'https://via.placeholder.com/300x450' }}" alt="{{ $showtime->movie->title }}" class="w-full rounded-xl shadow-lg object-cover aspect-[2/3]">
             </div>
 
             <!-- Movie Info -->
             <div class="relative z-10 flex-1 flex flex-col justify-center text-center lg:text-left">
                 <h1
-                    class="text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-4 uppercase tracking-wide">
+                    class="text-2xl sm:text-3xl md:text-4xl font-marquee text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-4 tracking-wide">
                     {{ $showtime->movie->title }}
                 </h1>
                 
@@ -29,8 +29,8 @@
                     </span>
                     @if($showtime->movie->trailer_url)
                         <button @click.prevent="trailerUrl = '{{ $showtime->movie->trailer_url }}'; showTrailer = true"
-                            class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1 rounded-full font-semibold transition flex items-center gap-2">
-                            <i class="fas fa-play text-xs text-primary"></i> Xem Trailer
+                            class="btn-secondary px-3 py-1 text-xs">
+                            <i class="fas fa-play text-xs mr-2"></i> Xem Trailer
                         </button>
                     @endif
                 </div>
@@ -128,7 +128,7 @@
             </div>
         </div>
 
-        <div class="max-w-4xl mx-auto mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl">
+        <div class="max-w-4xl mx-auto mb-8 rounded-2xl border border-dark-border bg-dark-card p-5 shadow-xl liquid-glass">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
                     <h3 class="text-xl font-bold text-white">Đặt bắp nước & snack</h3>
@@ -139,7 +139,7 @@
 
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
                 <template x-for="item in snackItems" :key="item.id">
-                    <div class="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                    <div class="rounded-xl border border-dark-border bg-dark p-4 liquid-glass">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <div class="flex items-center gap-2 text-white font-semibold">
@@ -195,10 +195,10 @@
                     </div>
 
                     <button @click="submitBooking()" :disabled="selectedSeats.length === 0 || processing"
-                        class="bg-gradient-to-r from-red-600 to-primary hover:from-red-500 hover:to-red-600 disabled:from-slate-700 disabled:to-slate-800 disabled:text-slate-500 text-white font-bold py-3.5 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/40 disabled:shadow-none flex items-center justify-center gap-3 group">
+                        class="btn-primary group disabled:opacity-50 disabled:cursor-not-allowed">
                         <span x-show="!processing" class="text-lg">Thanh toán</span>
                         <i x-show="!processing"
-                            class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            class="fas fa-arrow-right group-hover:translate-x-1 transition-transform ml-2"></i>
                         <span x-show="processing"
                             class="inline-block animate-spin w-5 h-5 border-2 border-white/30 border-t-white rounded-full"></span>
                         <span x-show="processing">Đang xử lý...</span>

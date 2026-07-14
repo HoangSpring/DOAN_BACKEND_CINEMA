@@ -3,16 +3,16 @@
 @section('title', 'Thanh toán')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8 max-w-4xl" x-data="checkoutPage()">
-        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row">
-            <div class="p-6 md:w-2/3 border-b md:border-b-0 md:border-r border-gray-700">
-                <h1 class="text-2xl font-bold text-white mb-6">Thông tin vé</h1>
+    <div class="container mx-auto px-4 py-8 max-w-4xl font-body" x-data="checkoutPage()">
+        <div class="bg-dark-card border border-dark-border rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row liquid-glass">
+            <div class="p-6 md:w-2/3 border-b md:border-b-0 md:border-r border-dark-border">
+                <h1 class="text-2xl font-marquee text-white mb-6">Thông tin vé</h1>
 
                 <div class="flex gap-4 mb-6">
                     <img src="{{ $booking->showtime->movie->poster_url }}" alt="{{ $booking->showtime->movie->title }}"
                         class="w-32 h-48 object-cover rounded shadow">
                     <div>
-                        <h2 class="text-xl font-bold text-red-500 mb-2">{{ $booking->showtime->movie->title }}</h2>
+                        <h2 class="text-xl font-marquee text-primary mb-2">{{ $booking->showtime->movie->title }}</h2>
                         <p class="text-gray-300 mb-1"><span class="font-semibold text-gray-400">Rạp:</span>
                             {{ $booking->showtime->room->name }}</p>
                         <p class="text-gray-300 mb-1"><span class="font-semibold text-gray-400">Suất chiếu:</span>
@@ -28,7 +28,7 @@
                 </div>
 
                 @if(!empty($booking->items_data))
-                    <div class="border-t border-gray-700 pt-4 mt-4">
+                    <div class="border-t border-dark-border pt-4 mt-4">
                         <p class="text-gray-400 font-semibold mb-3">Bắp nước & snack</p>
                         @foreach($booking->items_data as $item)
                             <div class="flex items-center justify-between text-sm text-gray-300 mb-2">
@@ -39,19 +39,19 @@
                     </div>
                 @endif
 
-                <div class="border-t border-gray-700 pt-4 mt-4 flex justify-between items-center">
+                <div class="border-t border-dark-border pt-4 mt-4 flex justify-between items-center">
                     <span class="text-xl text-gray-300 font-semibold">Tổng tiền:</span>
                     <span
-                        class="text-3xl font-bold text-yellow-500">{{ number_format($booking->total_amount, 0, ',', '.') }}
+                        class="text-3xl font-bold text-primary">{{ number_format($booking->total_amount, 0, ',', '.') }}
                         ₫</span>
                 </div>
             </div>
 
             <div class="p-6 md:w-1/3 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-lg font-bold text-white mb-4">Thanh toán</h3>
+                    <h3 class="text-lg font-marquee text-white mb-4">Thanh toán</h3>
 
-                    <div class="bg-gray-700/50 p-4 rounded-lg mb-6 border border-red-900/30 relative overflow-hidden">
+                    <div class="bg-dark p-4 rounded-lg mb-6 border border-dark-border relative overflow-hidden liquid-glass">
                         <div class="absolute inset-0 bg-red-500/10 animate-pulse"></div>
                         <div class="relative z-10 text-center">
                             <p class="text-sm text-gray-400 mb-1">Thời gian giữ ghế còn lại</p>
@@ -61,8 +61,7 @@
                 </div>
 
                 <button @click="processPayment" x-bind:disabled="processing"
-                    class="w-full py-4 rounded-lg font-bold text-lg transition-all"
-                    :class="processing ? 'bg-gray-600 text-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-red-600/30'">
+                    class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed">
                     <span x-show="!processing">Xác nhận thanh toán</span>
                     <span x-show="processing" class="flex items-center justify-center">
                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"

@@ -13,7 +13,7 @@
             </div>
             
             <div class="flex-1 text-center md:text-left text-white space-y-6 mt-4 md:mt-0">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">{{ $movie->title }}</h1>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-marquee tracking-tight">{{ $movie->title }}</h1>
                 
                 <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
                     <span class="bg-primary text-white text-sm px-3 py-1 rounded font-semibold">{{ $movie->age_rating }}</span>
@@ -26,13 +26,13 @@
                     @endforeach
                     @if($movie->trailer_url)
                         <button @click.prevent="trailerUrl = '{{ $movie->trailer_url }}'; showTrailer = true"
-                            class="bg-white/20 hover:bg-white/30 text-white border border-white/40 text-sm px-4 py-1.5 rounded font-semibold transition flex items-center gap-2">
-                            <i class="fas fa-play text-xs"></i> Xem Trailer
+                            class="btn-secondary text-sm px-4 py-1.5">
+                            <i class="fas fa-play text-xs mr-2"></i> Xem Trailer
                         </button>
                     @endif
                 </div>
                 
-                <div class="text-white/70 text-lg leading-relaxed max-w-3xl">
+                <div class="font-body text-white/70 text-lg leading-relaxed max-w-3xl">
                     <p>{{ $movie->description }}</p>
                 </div>
             </div>
@@ -41,17 +41,17 @@
 </div>
 
 <!-- Movie Information Section -->
-<div class="container mx-auto px-4 py-12">
+<div class="container mx-auto px-4 py-12 font-body">
     <div class="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
-            <h2 class="text-2xl font-semibold text-white">Nội dung phim</h2>
+        <div class="rounded-2xl border border-dark-border bg-dark-card p-6 shadow-xl liquid-glass">
+            <h2 class="text-2xl font-marquee text-white">Nội dung phim</h2>
             <p class="mt-4 whitespace-pre-line text-slate-300 leading-7">
                 {{ $movie->content ?: 'Thông tin nội dung phim sẽ được cập nhật sớm.' }}
             </p>
         </div>
 
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
-            <h2 class="text-2xl font-semibold text-white">Thông tin chi tiết</h2>
+        <div class="rounded-2xl border border-dark-border bg-dark-card p-6 shadow-xl liquid-glass">
+            <h2 class="text-2xl font-marquee text-white">Thông tin chi tiết</h2>
             <dl class="mt-4 space-y-4 text-sm text-slate-300">
                 <div>
                     <dt class="font-semibold text-slate-400">Đạo diễn</dt>
@@ -67,8 +67,8 @@
 </div>
 
 <!-- Showtimes Section -->
-<div class="container mx-auto px-4 py-12">
-    <h2 class="text-3xl font-bold mb-8 flex items-center gap-2">
+<div class="container mx-auto px-4 py-12 font-body">
+    <h2 class="text-3xl font-marquee mb-8 flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar text-primary"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
         Lịch Chiếu
     </h2>
@@ -95,7 +95,7 @@
         <!-- Showtimes List -->
         <div class="mt-8">
             @if($showtimes->count() > 0)
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <div class="bg-dark-card border border-dark-border rounded-xl p-6 liquid-glass">
                     <div class="flex flex-wrap gap-4">
                         @foreach($showtimes as $st)
                         <a href="{{ url('/showtimes/'.$st->id.'/seats') }}" class="flex flex-col gap-1 items-center justify-center border border-slate-700 hover:border-primary hover:text-primary bg-slate-800 hover:bg-slate-800/50 transition-colors py-4 px-6 rounded-xl">

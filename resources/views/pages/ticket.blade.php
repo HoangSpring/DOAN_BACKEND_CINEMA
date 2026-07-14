@@ -3,9 +3,9 @@
 @section('title', 'Vé điện tử')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 max-w-2xl">
+<div class="container mx-auto px-4 py-8 max-w-2xl font-body">
     <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-white mb-2">Thanh toán thành công!</h1>
+        <h1 class="text-3xl font-marquee text-white mb-2">Thanh toán thành công!</h1>
         <p class="text-gray-400">Dưới đây là vé điện tử của bạn. Vui lòng đưa mã QR này cho nhân viên để check-in.</p>
     </div>
 
@@ -13,13 +13,13 @@
     <div class="bg-white rounded-xl shadow-2xl overflow-hidden relative text-gray-900 mx-auto w-full max-w-md">
         
         <!-- Ticket Header -->
-        <div class="bg-gray-900 p-6 text-center">
-            <h2 class="text-2xl font-bold text-red-500 uppercase tracking-widest">CINEMA TICKET</h2>
+        <div class="bg-dark p-6 text-center border-b border-dark-border liquid-glass text-white">
+            <h2 class="text-2xl font-marquee text-primary uppercase tracking-widest">CINEMA TICKET</h2>
         </div>
         
         <!-- Ticket Body -->
         <div class="p-6">
-            <h3 class="text-xl font-bold mb-4 border-b pb-2">{{ $booking->showtime->movie->title }}</h3>
+            <h3 class="text-xl font-marquee mb-4 border-b border-gray-200 pb-2">{{ $booking->showtime->movie->title }}</h3>
             
             <div class="grid grid-cols-2 gap-y-4 gap-x-2 mb-6 text-sm">
                 <div>
@@ -32,7 +32,7 @@
                 </div>
                 <div>
                     <p class="text-gray-500 font-semibold uppercase text-xs">Giờ chiếu</p>
-                    <p class="font-bold text-lg text-red-600">{{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }}</p>
+                    <p class="font-bold text-lg text-primary">{{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }}</p>
                 </div>
                 <div>
                     <p class="text-gray-500 font-semibold uppercase text-xs">Mã đặt vé</p>
@@ -93,7 +93,7 @@
     </div>
     
     <div class="mt-8 text-center">
-        <a href="{{ route('home') }}" class="text-gray-400 hover:text-white transition inline-flex items-center gap-2">
+        <a href="{{ route('home') }}" class="btn-secondary inline-flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             Quay lại trang chủ
         </a>

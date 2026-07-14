@@ -1,3 +1,88 @@
 @import "tailwindcss";
 
-@source "../../views/**/*.blade.php";
+/* |--------------------------------------------------------------------------
+| ĐƯỜNG DẪN QUÉT FILE (Chỉ định rõ ràng từ gốc dự án)
+|--------------------------------------------------------------------------
+*/
+@source 'resources/views/**/*.blade.php';
+@source 'resources/js/**/*.js';
+@source 'resources/js/**/*.vue';
+
+/* |--------------------------------------------------------------------------
+| ĐỊNH NGHĨA HỆ THỐNG MÀU SẮC & FONT CHỮ (CINESTAR THEME)
+|--------------------------------------------------------------------------
+*/
+@theme {
+    --color-dark: #0b0b0f;
+    --color-dark-card: #13131a;
+    --color-dark-border: #1f1f2e;
+    --color-primary: #ffbd00;
+    --color-primary-hover: #e0a600;
+    --color-secondary: #5b21b6;
+
+    --font-marquee: "Anton", sans-serif;
+    --font-body: "Josefin Sans", sans-serif;
+}
+
+/* |--------------------------------------------------------------------------
+| HỆ THỐNG LỚP TIỆN ÍCH BỔ SUNG (CUSTOM UTILITIES)
+|--------------------------------------------------------------------------
+*/
+
+/* Hiệu ứng phát sáng vàng hoàng kim */
+@utility shadow-glow-primary {
+    box-shadow: 0 0 20px rgba(255, 189, 0, 0.35);
+}
+
+/* Hiệu ứng kính mờ cho các khung lịch chiếu */
+@utility liquid-glass {
+    background: rgba(19, 19, 26, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Nút bấm chính (Vàng đen nổi bật) */
+@utility btn-primary {
+    background-color: var(--color-primary);
+    color: #000000;
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        box-shadow: 0 0 20px rgba(255, 189, 0, 0.45);
+        transform: scale(1.02);
+    }
+}
+
+/* Nút bấm phụ (Tím huyền bí rạp phim) */
+@utility btn-secondary {
+    background-color: var(--color-secondary);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: #4c1d95;
+    }
+}
+
+/* Thẻ bọc Poster phim hiệu ứng co giãn và phát sáng nhẹ */
+@utility poster-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease;
+
+    &:hover {
+        box-shadow: 0 0 30px rgba(255, 189, 0, 0.2);
+    }
+}

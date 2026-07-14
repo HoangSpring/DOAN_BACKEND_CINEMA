@@ -1,13 +1,17 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import tailwindcss from '@tailwindcss/vite'; // <-- Thêm dòng import này
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     plugins: [
-        tailwindcss(), // <-- Thêm plugin này nằm TRƯỚC laravel()
+        tailwindcss(),
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
+            refresh: [
+                'resources/views/**/*.blade.php',
+                'resources/js/**/*.blade.php',
+                'resources/css/**/*.css',
+            ],
         }),
     ],
 });
