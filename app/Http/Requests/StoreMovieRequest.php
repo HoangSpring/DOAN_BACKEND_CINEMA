@@ -10,6 +10,9 @@ class StoreMovieRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'director' => ['nullable', 'string', 'max:255'],
+            'actors' => ['nullable', 'string'],
+            'content' => ['nullable', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'genre' => ['nullable', 'string', 'max:100'],
             'age_rating' => ['required', 'in:P,K,T13,T16,T18'],

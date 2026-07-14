@@ -17,6 +17,9 @@ class HoldSeatsRequest extends FormRequest
             'showtime_id' => 'required|exists:showtimes,id',
             'seat_ids' => 'required|array|min:1',
             'seat_ids.*' => 'exists:seats,id',
+            'items' => 'nullable|array',
+            'items.*.id' => 'required|string',
+            'items.*.quantity' => 'required|integer|min:1',
         ];
     }
 }

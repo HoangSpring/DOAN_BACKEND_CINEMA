@@ -24,12 +24,44 @@
                     @foreach($movie->tags as $tag)
                         <span class="border border-white/30 bg-white/5 text-white/80 text-sm px-3 py-1 rounded">{{ $tag->name }}</span>
                     @endforeach
+                    @if($movie->trailer_url)
+                        <button @click.prevent="trailerUrl = '{{ $movie->trailer_url }}'; showTrailer = true"
+                            class="bg-white/20 hover:bg-white/30 text-white border border-white/40 text-sm px-4 py-1.5 rounded font-semibold transition flex items-center gap-2">
+                            <i class="fas fa-play text-xs"></i> Xem Trailer
+                        </button>
+                    @endif
                 </div>
                 
                 <div class="text-white/70 text-lg leading-relaxed max-w-3xl">
                     <p>{{ $movie->description }}</p>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Movie Information Section -->
+<div class="container mx-auto px-4 py-12">
+    <div class="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
+            <h2 class="text-2xl font-semibold text-white">Nội dung phim</h2>
+            <p class="mt-4 whitespace-pre-line text-slate-300 leading-7">
+                {{ $movie->content ?: 'Thông tin nội dung phim sẽ được cập nhật sớm.' }}
+            </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
+            <h2 class="text-2xl font-semibold text-white">Thông tin chi tiết</h2>
+            <dl class="mt-4 space-y-4 text-sm text-slate-300">
+                <div>
+                    <dt class="font-semibold text-slate-400">Đạo diễn</dt>
+                    <dd class="mt-1 text-white">{{ $movie->director ?: 'Đang cập nhật' }}</dd>
+                </div>
+                <div>
+                    <dt class="font-semibold text-slate-400">Diễn viên</dt>
+                    <dd class="mt-1 text-white">{{ $movie->actors ?: 'Đang cập nhật' }}</dd>
+                </div>
+            </dl>
         </div>
     </div>
 </div>

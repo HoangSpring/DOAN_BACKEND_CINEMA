@@ -34,14 +34,20 @@ class StaffController extends Controller
                     if ($status === 'holding' && $ss->hold_expires_at && $ss->hold_expires_at->isPast()) {
                         $status = 'available';
                     }
+
+                    $seatType = $ss->seat?->seat_type ?? 'standard';
+
                     return [
                         'id' => $ss->id,
                         'seat_id' => $ss->seat_id,
-                        'row' => $ss->seat->row ?? $ss->seat->seat_row,
-                        'number' => $ss->seat->number ?? $ss->seat->seat_number,
-                        'type' => $ss->seat->type ?? $ss->seat->seat_type,
+                        'row' => $ss->seat?->seat_row,
+                        'seat_row' => $ss->seat?->seat_row,
+                        'number' => $ss->seat?->seat_number,
+                        'seat_number' => $ss->seat?->seat_number,
+                        'type' => $seatType,
+                        'seat_type' => $seatType,
                         'status' => $status,
-                        'price' => ($ss->seat->type ?? $ss->seat->seat_type) === 'vip' ? $ss->showtime->price_vip : $ss->showtime->price_standard,
+                        'price' => $seatType === 'vip' ? $ss->showtime->price_vip : $ss->showtime->price_standard,
                     ];
                 });
         }

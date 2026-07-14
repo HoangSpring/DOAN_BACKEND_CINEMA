@@ -14,6 +14,7 @@ class Booking extends Model
         'showtime_id',
         'booking_code',
         'total_amount',
+        'items_data',
         'status',
         'booking_type',
         'qr_code_data',
@@ -26,6 +27,7 @@ class Booking extends Model
     {
         return [
             'total_amount' => 'decimal:2',
+            'items_data' => 'array',
             'is_checked_in' => 'boolean',
             'checked_in_at' => 'datetime',
         ];

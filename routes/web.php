@@ -26,8 +26,11 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Web Routes (Prompt 16)
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Web\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [\App\Http\Controllers\Web\Admin\DashboardController::class, 'index']);
     Route::get('reports', [\App\Http\Controllers\Web\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::resource('users', \App\Http\Controllers\Web\Admin\UserController::class);
     Route::resource('movies', \App\Http\Controllers\Web\Admin\MovieController::class);
     Route::resource('tags', \App\Http\Controllers\Web\Admin\TagController::class)->except(['create', 'show', 'edit']);
     Route::resource('rooms', \App\Http\Controllers\Web\Admin\RoomController::class)->only(['index', 'show']);
@@ -36,7 +39,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 // Staff Web Routes (Prompt 18)
-Route::middleware(['auth'])->prefix('staff')->name('staff.')->group(function () {
+Route::middleware(['auth', 'role:admin,staff'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('counter', [\App\Http\Controllers\Web\StaffController::class, 'counter'])->name('counter');
     Route::get('checkin', [\App\Http\Controllers\Web\StaffController::class, 'checkin'])->name('checkin');
 });

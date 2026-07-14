@@ -50,6 +50,20 @@
                     @endforeach
                 </div>
             </div>
+
+            @if(!empty($booking->items_data))
+                <div class="mb-4">
+                    <p class="text-gray-500 font-semibold uppercase text-xs mb-2">Bắp nước & snack</p>
+                    <div class="space-y-1 text-sm">
+                        @foreach($booking->items_data as $item)
+                            <div class="flex justify-between text-gray-700">
+                                <span>{{ $item['name'] }} x{{ $item['quantity'] }}</span>
+                                <span>{{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 0), 0, ',', '.') }} ₫</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
         
         <!-- Dashed Divider -->

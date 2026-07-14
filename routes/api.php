@@ -16,7 +16,7 @@ Route::get('tags', [TagController::class, 'index']);
 Route::get('movies/{movie}/showtimes', [ShowtimeController::class, 'index']);
 Route::get('showtimes/{showtime}/seats', [ShowtimeController::class, 'seats']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     
@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:admin,staff')->prefix('staff')->group(function () {
         Route::post('/bookings/counter', [\App\Http\Controllers\BookingController::class, 'counter'])
             ->middleware(\App\Http\Middleware\CheckIdempotencyKey::class);
+        Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel']);
             
         Route::post('/checkin', [\App\Http\Controllers\CheckinController::class, 'checkin']);
     });

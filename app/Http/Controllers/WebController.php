@@ -11,7 +11,12 @@ class WebController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Movie::with('tags')->where('status', 'showing');
+        $validStatuses = ['showing', 'coming_soon'];
+        $status = in_array($request->query('status'), $validStatuses) ? $request->query('status') : 'showing';
+
+        $query = Movie::with(['tags', 'showtimes' => function ($q) {
+            $q->where('start_time', '>=', now())->orderBy('start_time');
+        }])->where('status', $status);
         
         if ($request->has('tags') && !empty($request->tags)) {
             $tagSlugs = explode(',', $request->tags);
@@ -24,7 +29,7 @@ class WebController extends Controller
         $tags = Tag::all();
         $featuredMovies = $movies->take(3);
         
-        return view('pages.home', compact('movies', 'tags', 'featuredMovies'));
+        return view('pages.home', compact('movies', 'tags', 'featuredMovies', 'status'));
     }
 
     public function showMovie($id)
@@ -67,14 +72,20 @@ class WebController extends Controller
             if ($status === 'holding' && $ss->hold_expires_at && $ss->hold_expires_at->isPast()) {
                 $status = 'available';
             }
+
+            $seatType = $ss->seat?->seat_type ?? 'standard';
+
             return [
                 'id' => $ss->id,
                 'seat_id' => $ss->seat_id,
-                'row' => $ss->seat->row,
-                'number' => $ss->seat->number,
-                'type' => $ss->seat->type,
+                'row' => $ss->seat?->seat_row,
+                'seat_row' => $ss->seat?->seat_row,
+                'number' => $ss->seat?->seat_number,
+                'seat_number' => $ss->seat?->seat_number,
+                'type' => $seatType,
+                'seat_type' => $seatType,
                 'status' => $status,
-                'price' => $ss->seat->type === 'vip' ? $ss->showtime->price_vip : $ss->showtime->price_standard,
+                'price' => $seatType === 'vip' ? $ss->showtime->price_vip : $ss->showtime->price_standard,
             ];
         });
         

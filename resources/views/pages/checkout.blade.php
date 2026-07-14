@@ -27,6 +27,18 @@
                     </div>
                 </div>
 
+                @if(!empty($booking->items_data))
+                    <div class="border-t border-gray-700 pt-4 mt-4">
+                        <p class="text-gray-400 font-semibold mb-3">Bắp nước & snack</p>
+                        @foreach($booking->items_data as $item)
+                            <div class="flex items-center justify-between text-sm text-gray-300 mb-2">
+                                <span>{{ $item['name'] }} x{{ $item['quantity'] }}</span>
+                                <span>{{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 0), 0, ',', '.') }} ₫</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
                 <div class="border-t border-gray-700 pt-4 mt-4 flex justify-between items-center">
                     <span class="text-xl text-gray-300 font-semibold">Tổng tiền:</span>
                     <span

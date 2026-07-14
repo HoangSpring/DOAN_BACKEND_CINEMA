@@ -12,9 +12,13 @@ class SeatResource extends JsonResource
         return [
             'id' => $this->id,
             'room_id' => $this->room_id,
-            'row_name' => $this->row_name,
+            'row' => $this->seat_row,
+            'seat_row' => $this->seat_row,
+            'row_name' => $this->seat_row,
+            'number' => $this->seat_number,
             'seat_number' => $this->seat_number,
-            'type' => $this->type,
+            'type' => $this->seat_type,
+            'seat_type' => $this->seat_type,
         ];
     }
 }

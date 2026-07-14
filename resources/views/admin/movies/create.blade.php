@@ -7,7 +7,7 @@
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden p-6">
-    <form action="{{ isset($movie) ? route('admin.movies.update', $movie->id) : route('admin.movies.store') }}" method="POST">
+    <form action="{{ isset($movie) ? route('admin.movies.update', $movie->id) : route('admin.movies.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @if(isset($movie))
             @method('PUT')
@@ -21,9 +21,25 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label class="block text-sm font-medium text-gray-700">URL Poster</label>
-                <input type="url" name="poster_url" value="{{ old('poster_url', $movie->poster_url ?? '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                <label class="block text-sm font-medium text-gray-700">Poster (URL hoặc Upload)</label>
+                <div class="mt-1 flex flex-col gap-2">
+                    <input type="url" name="poster_url" value="{{ old('poster_url', $movie->poster_url ?? '') }}" placeholder="Nhập link ảnh..." class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                    <span class="text-xs text-gray-500 text-center font-semibold">HOẶC CHỌN TỪ MÁY TÍNH</span>
+                    <input type="file" name="poster_file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border p-1 rounded-md">
+                </div>
                 @error('poster_url') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                @error('poster_file') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label class="block text-sm font-medium text-gray-700">Trailer (URL hoặc Upload) <span class="text-xs text-gray-500 font-normal">(.mp4)</span></label>
+                <div class="mt-1 flex flex-col gap-2">
+                    <input type="url" name="trailer_url" value="{{ old('trailer_url', $movie->trailer_url ?? '') }}" placeholder="Nhập link video..." class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                    <span class="text-xs text-gray-500 text-center font-semibold">HOẶC CHỌN TỪ MÁY TÍNH</span>
+                    <input type="file" name="trailer_file" accept="video/mp4,video/x-m4v,video/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border p-1 rounded-md">
+                </div>
+                @error('trailer_url') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                @error('trailer_file') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
 
             <div class="col-span-2 md:col-span-1">
@@ -79,9 +95,27 @@
             </div>
             
             <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-700">Mô tả</label>
-                <textarea name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">{{ old('description', $movie->description ?? '') }}</textarea>
+                <label class="block text-sm font-medium text-gray-700">Mô tả ngắn</label>
+                <textarea name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">{{ old('description', $movie->description ?? '') }}</textarea>
                 @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label class="block text-sm font-medium text-gray-700">Đạo diễn</label>
+                <input type="text" name="director" value="{{ old('director', $movie->director ?? '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                @error('director') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label class="block text-sm font-medium text-gray-700">Diễn viên</label>
+                <input type="text" name="actors" value="{{ old('actors', $movie->actors ?? '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                @error('actors') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700">Nội dung phim</label>
+                <textarea name="content" rows="6" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">{{ old('content', $movie->content ?? '') }}</textarea>
+                @error('content') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
         </div>
 

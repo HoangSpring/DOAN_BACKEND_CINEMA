@@ -23,7 +23,7 @@ class ReportController extends Controller
             ? "DATE_FORMAT(p.paid_at, '%Y-%m')" 
             : "DATE(p.paid_at)";
 
-        $revenueData = DB::select("
+        $revenueData = $this->summarizeChartRows(DB::select("
             SELECT {$selectClause}, SUM(p.amount) AS revenue, COUNT(*) AS total_orders
             FROM payments p
             WHERE p.status = 'success' AND p.paid_at BETWEEN :from AND :to
@@ -32,9 +32,9 @@ class ReportController extends Controller
         ", [
             'from' => $from . ' 00:00:00',
             'to' => $to . ' 23:59:59'
-        ]);
+        ]), 12);
 
-        $revenueByMovie = DB::select("
+        $revenueByMovie = $this->summarizeChartRows(DB::select("
             SELECT m.title AS label, SUM(p.amount) AS revenue, COUNT(DISTINCT b.id) AS total_bookings
             FROM payments p
             JOIN bookings b ON b.id = p.booking_id
@@ -46,53 +46,52 @@ class ReportController extends Controller
         ", [
             'from' => $from . ' 00:00:00',
             'to' => $to . ' 23:59:59'
-        ]);
+        ]), 10);
 
-        // Dashboard stats
-        $totalRevenue = DB::selectOne("
-            SELECT SUM(p.amount) AS total FROM payments p WHERE p.status = 'success'
-        ")->total ?? 0;
 
-        $totalTickets = DB::selectOne("
-            SELECT COUNT(*) AS total FROM bookings b WHERE b.status = 'paid'
-        ")->total ?? 0;
-
-        $avgOccupancy = DB::selectOne("
-            SELECT ROUND(AVG(occupancy), 2) AS avg_rate
-            FROM (
-                SELECT s.id, SUM(CASE WHEN ss.status = 'booked' THEN 1 ELSE 0 END) * 100.0 / COUNT(ss.id) AS occupancy
-                FROM showtimes s
-                JOIN showtime_seats ss ON ss.showtime_id = s.id
-                WHERE s.status = 'ended'
-                GROUP BY s.id
-            ) AS sub
-        ")->avg_rate ?? 0;
-
-        // Occupancy for upcoming showtimes
-        $upcomingShowtimes = DB::select("
-            SELECT
-                s.id,
-                m.title,
-                r.name AS room_name,
-                s.start_time,
-                COUNT(ss.id) AS total_seats,
-                SUM(CASE WHEN ss.status = 'booked' THEN 1 ELSE 0 END) AS booked_seats,
-                ROUND(SUM(CASE WHEN ss.status = 'booked' THEN 1 ELSE 0 END) * 100.0 / COUNT(ss.id), 2) AS occupancy_rate
-            FROM showtimes s
-            JOIN showtime_seats ss ON ss.showtime_id = s.id
-            JOIN movies m ON m.id = s.movie_id
-            JOIN rooms r ON r.id = s.room_id
-            WHERE s.start_time > NOW() AND s.status != 'cancelled'
-            GROUP BY s.id, m.title, r.name, s.start_time
-            ORDER BY s.start_time ASC
-            LIMIT 10
-        ");
 
         return view('admin.reports.index', compact(
             'from', 'to', 'groupBy', 
-            'revenueData', 'revenueByMovie', 
-            'totalRevenue', 'totalTickets', 'avgOccupancy',
-            'upcomingShowtimes'
+            'revenueData', 'revenueByMovie'
         ));
+    }
+
+    private function summarizeChartRows(array $rows, int $limit = 10): array
+    {
+        if (count($rows) <= $limit) {
+            return array_map(function ($row) {
+                return [
+                    'label' => $row->label,
+                    'revenue' => (float) ($row->revenue ?? 0),
+                    'total_orders' => (int) ($row->total_orders ?? $row->total_bookings ?? 0),
+                ];
+            }, $rows);
+        }
+
+        $topRows = array_slice($rows, 0, $limit - 1);
+        $otherRows = array_slice($rows, $limit - 1);
+
+        $summary = [
+            'label' => 'Khác',
+            'revenue' => 0,
+            'total_orders' => 0,
+        ];
+
+        foreach ($otherRows as $row) {
+            $summary['revenue'] += (float) ($row->revenue ?? 0);
+            $summary['total_orders'] += (int) ($row->total_orders ?? $row->total_bookings ?? 0);
+        }
+
+        $formattedTopRows = array_map(function ($row) {
+            return [
+                'label' => $row->label,
+                'revenue' => (float) ($row->revenue ?? 0),
+                'total_orders' => (int) ($row->total_orders ?? $row->total_bookings ?? 0),
+            ];
+        }, $topRows);
+
+        $formattedTopRows[] = $summary;
+
+        return $formattedTopRows;
     }
 }

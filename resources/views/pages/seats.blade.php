@@ -3,51 +3,67 @@
 @section('content')
     <div class="container mx-auto px-4 py-8" x-data="seatSelector()">
         <div
-            class="bg-slate-900 border border-slate-800 shadow-2xl shadow-slate-900/50 rounded-2xl p-6 mb-12 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+            class="bg-slate-900 border border-slate-800 shadow-2xl shadow-slate-900/50 rounded-2xl p-6 mb-12 flex flex-col lg:flex-row gap-8 relative overflow-hidden">
             <div
                 class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none">
             </div>
 
-            <div class="relative z-10 text-center md:text-left">
+            <!-- Movie Poster -->
+            <div class="relative z-10 w-32 sm:w-48 shrink-0 mx-auto lg:mx-0">
+                <img src="{{ $showtime->movie->poster_url ?? 'https://via.placeholder.com/300x450' }}" alt="{{ $showtime->movie->title }}" class="w-full rounded-xl shadow-lg border border-white/10 object-cover aspect-[2/3]">
+            </div>
+
+            <!-- Movie Info -->
+            <div class="relative z-10 flex-1 flex flex-col justify-center text-center lg:text-left">
                 <h1
-                    class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-2 uppercase tracking-wide">
+                    class="text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-4 uppercase tracking-wide">
                     {{ $showtime->movie->title }}
                 </h1>
-                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 text-sm">
-                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Phòng: <strong
-                            class="text-white">{{ $showtime->room->name }}</strong></span>
+                
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 text-sm mb-4">
+                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700 font-semibold">{{ $showtime->movie->age_rating }}</span>
+                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">{{ $showtime->movie->duration_minutes }} phút</span>
+                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Phòng: <strong class="text-white">{{ $showtime->room->name }}</strong></span>
                     <span class="bg-primary/20 text-primary px-3 py-1 rounded-full font-semibold border border-primary/30">
                         {{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i - d/m/Y') }}
                     </span>
+                    @if($showtime->movie->trailer_url)
+                        <button @click.prevent="trailerUrl = '{{ $showtime->movie->trailer_url }}'; showTrailer = true"
+                            class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1 rounded-full font-semibold transition flex items-center gap-2">
+                            <i class="fas fa-play text-xs text-primary"></i> Xem Trailer
+                        </button>
+                    @endif
+                </div>
+
+                <div class="text-slate-400 text-sm mb-4 line-clamp-3">
+                    {{ $showtime->movie->description }}
+                </div>
+                
+                <div class="text-xs text-slate-500 space-y-1">
+                    <p><strong class="text-slate-300">Đạo diễn:</strong> {{ $showtime->movie->director ?: 'Đang cập nhật' }}</p>
+                    <p><strong class="text-slate-300">Diễn viên:</strong> {{ $showtime->movie->actors ?: 'Đang cập nhật' }}</p>
                 </div>
             </div>
 
+            <!-- Seat Legend -->
             <div
-                class="relative z-10 flex flex-wrap justify-center gap-6 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-                <div class="flex flex-col items-center gap-2">
-                    <div class="w-8 h-8 bg-slate-700 rounded-t-lg rounded-b-sm shadow-inner border-t border-slate-600">
-                    </div>
+                class="relative z-10 flex flex-wrap justify-center lg:flex-col gap-4 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800 shrink-0 self-center lg:self-stretch lg:justify-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-slate-700 rounded-t-md rounded-b-sm shadow-inner border-t border-slate-600"></div>
                     <span class="text-slate-400 text-xs font-medium">Trống</span>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-8 h-8 bg-primary rounded-t-lg rounded-b-sm shadow-[0_0_15px_rgba(229,9,20,0.5)] border-t border-red-400">
-                    </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-primary rounded-t-md rounded-b-sm shadow-[0_0_10px_rgba(229,9,20,0.5)] border-t border-red-400"></div>
                     <span class="text-white font-bold text-xs">Đang chọn</span>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-8 h-8 bg-slate-900 border border-slate-800 rounded-t-lg rounded-b-sm opacity-50 relative overflow-hidden">
-                        <div
-                            class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')]">
-                        </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-slate-900 border border-slate-800 rounded-t-md rounded-b-sm opacity-50 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')]"></div>
                     </div>
                     <span class="text-slate-500 text-xs">Đã bán</span>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-8 h-8 bg-slate-700 border-2 border-yellow-500 rounded-t-lg rounded-b-sm shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                    </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-slate-700 border border-yellow-500 rounded-t-md rounded-b-sm shadow-[0_0_8px_rgba(234,179,8,0.2)]"></div>
                     <span class="text-yellow-500 font-semibold text-xs">Ghế VIP</span>
                 </div>
             </div>
@@ -84,11 +100,11 @@
                                     :disabled="(seat.status !== 'available' && seat.status !== 'trống') && !isSelected(seat.id || seat.seat_id)"
                                     class="w-10 h-10 sm:w-11 sm:h-11 rounded-t-xl rounded-b-md text-xs font-bold transition-all duration-300 relative group flex items-center justify-center disabled:cursor-not-allowed transform hover:-translate-y-1"
                                     :class="{
-                                                            'bg-primary text-white border-t-2 border-red-400 shadow-[0_5px_15px_rgba(229,9,20,0.4)] scale-110 z-10': isSelected(seat.id || seat.seat_id),
-                                                            'bg-slate-900 border border-slate-800 text-slate-700 opacity-50': (seat.status !== 'available' && seat.status !== 'trống') && !isSelected(seat.id || seat.seat_id),
-                                                            'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white border-t border-slate-500': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && seat.type !== 'vip' && (seat.seat ? seat.seat.seat_type !== 'vip' : true),
-                                                            'bg-slate-700 border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black shadow-[0_0_10px_rgba(234,179,8,0.1)]': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && (seat.type === 'vip' || (seat.seat && seat.seat.seat_type === 'vip'))
-                                                        }">
+                                                                    'bg-primary text-white border-t-2 border-red-400 shadow-[0_5px_15px_rgba(229,9,20,0.4)] scale-110 z-10': isSelected(seat.id || seat.seat_id),
+                                                                    'bg-slate-900 border border-slate-800 text-slate-700 opacity-50': (seat.status !== 'available' && seat.status !== 'trống') && !isSelected(seat.id || seat.seat_id),
+                                                                    'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white border-t border-slate-500': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && !isVipSeat(seat),
+                                                                    'bg-slate-700 border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black shadow-[0_0_10px_rgba(234,179,8,0.1)]': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && isVipSeat(seat)
+                                                                }">
 
                                     <span x-text="seat.number"></span>
 
@@ -107,6 +123,38 @@
 
                         <div class="w-8 text-center font-bold text-slate-500 group-hover/row:text-primary transition-colors text-lg uppercase"
                             x-text="rowName"></div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-xl">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Đặt bắp nước & snack</h3>
+                    <p class="text-sm text-slate-400">Thêm đồ ăn nhẹ để trải nghiệm xem phim trọn vẹn hơn.</p>
+                </div>
+                <div class="text-sm font-semibold text-primary">Tạm tính: <span x-text="formatCurrency(foodSubtotal)"></span></div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+                <template x-for="item in snackItems" :key="item.id">
+                    <div class="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-white font-semibold">
+                                    <span x-text="item.icon"></span>
+                                    <span x-text="item.name"></span>
+                                </div>
+                                <p class="text-sm text-slate-400 mt-1" x-text="item.description"></p>
+                                <p class="text-sm font-semibold text-primary mt-2" x-text="formatCurrency(item.price)"></p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button @click="removeItem(item)" class="w-8 h-8 rounded-full border border-slate-700 text-slate-300 hover:bg-slate-800">−</button>
+                                <span class="w-8 text-center font-bold text-white" x-text="getItemQuantity(item.id)"></span>
+                                <button @click="addItem(item)" class="w-8 h-8 rounded-full border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20">+</button>
+                            </div>
+                        </div>
                     </div>
                 </template>
             </div>
@@ -186,6 +234,14 @@
                 showtimeId: {{ $showtime->id }},
                 seats: [],
                 selectedSeats: [],
+                selectedItems: [],
+                snackItems: [
+                    { id: 'popcorn_small', name: 'Bắp rang nhỏ', price: 35000, icon: '🍿', description: 'Phù hợp cho một người' },
+                    { id: 'popcorn_large', name: 'Bắp rang lớn', price: 55000, icon: '🍿', description: 'Cặp đôi hoặc nhóm xem phim' },
+                    { id: 'soda_small', name: 'Nước ngọt nhỏ', price: 25000, icon: '🥤', description: 'Ly nhỏ, giải khát nhanh' },
+                    { id: 'soda_large', name: 'Nước ngọt lớn', price: 35000, icon: '🥤', description: 'Ly lớn, uống thoải mái' },
+                    { id: 'snack_combo', name: 'Combo snack', price: 65000, icon: '🍿', description: 'Bắp + nước + snack' },
+                ],
                 loading: true,
                 processing: false,
                 error: '',
@@ -280,8 +336,40 @@
                     return this.selectedSeats.some(s => (s.id || s.seat_id) === seatId);
                 },
 
+                addItem(item) {
+                    const existing = this.selectedItems.find(entry => entry.id === item.id);
+                    if (existing) {
+                        existing.quantity += 1;
+                    } else {
+                        this.selectedItems.push({ ...item, quantity: 1 });
+                    }
+                },
+
+                removeItem(item) {
+                    const existing = this.selectedItems.find(entry => entry.id === item.id);
+                    if (!existing) return;
+
+                    if (existing.quantity > 1) {
+                        existing.quantity -= 1;
+                    } else {
+                        this.selectedItems = this.selectedItems.filter(entry => entry.id !== item.id);
+                    }
+                },
+
+                getItemQuantity(itemId) {
+                    return this.selectedItems.find(entry => entry.id === itemId)?.quantity || 0;
+                },
+
+                isVipSeat(seat) {
+                    return (seat?.type || seat?.seat_type || seat?.seat?.seat_type || '').toLowerCase() === 'vip';
+                },
+
+                get foodSubtotal() {
+                    return this.selectedItems.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
+                },
+
                 get totalPrice() {
-                    return this.selectedSeats.reduce((sum, seat) => sum + Number(seat.price || 0), 0);
+                    return this.selectedSeats.reduce((sum, seat) => sum + Number(seat.price || 0), 0) + this.foodSubtotal;
                 },
 
                 formatCurrency(value) {
@@ -311,7 +399,8 @@
                             },
                             body: JSON.stringify({
                                 showtime_id: this.showtimeId,
-                                seat_ids: targetSeatIds
+                                seat_ids: targetSeatIds,
+                                items: this.selectedItems.map(({ id, quantity }) => ({ id, quantity }))
                             })
                         });
 

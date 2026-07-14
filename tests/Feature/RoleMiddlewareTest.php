@@ -18,4 +18,13 @@ class RoleMiddlewareTest extends TestCase
         
         $response->assertStatus(403);
     }
+
+    public function test_customer_cannot_access_web_admin_routes()
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+
+        $response = $this->actingAs($customer)->get('/admin/reports');
+
+        $response->assertStatus(403);
+    }
 }
