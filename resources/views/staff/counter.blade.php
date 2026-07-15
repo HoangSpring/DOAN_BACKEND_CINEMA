@@ -1,8 +1,8 @@
 @extends('layouts.staff')
 
 @section('content')
-<div class="no-print">
-    <div class="mb-8 bg-white shadow rounded-lg p-6">
+<div>
+    <div class="mb-8 bg-white shadow rounded-lg p-6 no-print">
         <h2 class="text-2xl font-bold mb-4">Lựa chọn suất chiếu</h2>
         <form method="GET" action="{{ route('staff.counter') }}" class="flex gap-4 items-end">
             <div>
@@ -25,10 +25,11 @@
     </div>
 
     @if(isset($selectedShowtime) && isset($seats))
-    <div class="flex flex-col lg:flex-row gap-6" x-data="counterBooking()">
-        <!-- Sơ đồ ghế -->
-        <div class="bg-white shadow rounded-lg p-6 lg:w-2/3">
-            <h3 class="text-xl font-bold mb-6 text-center border-b pb-2">Sơ đồ ghế: {{ $selectedShowtime->room->name }}</h3>
+    <div x-data="counterBooking()">
+        <div class="flex flex-col lg:flex-row gap-6 no-print">
+            <!-- Sơ đồ ghế -->
+            <div class="bg-white shadow rounded-lg p-6 lg:w-2/3">
+                <h3 class="text-xl font-bold mb-6 text-center border-b pb-2">Sơ đồ ghế: {{ $selectedShowtime->room->name }}</h3>
             
             <div class="mb-10 text-center">
                 <div class="w-2/3 mx-auto h-8 bg-gray-300 text-gray-600 font-bold leading-8 rounded-t-xl">MÀN HÌNH</div>
@@ -134,10 +135,11 @@
                     <span x-show="processing">Đang xử lý...</span>
                 </button>
             </div>
+            </div>
         </div>
         
         <!-- Modal In Vé -->
-        <div x-show="ticketData" class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-75 flex items-center justify-center p-4" style="display: none;">
+        <div x-show="ticketData" class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-75 flex items-center justify-center p-4 no-print" style="display: none;">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center">
                 <h2 class="text-2xl font-bold text-green-600 mb-2">Thanh toán thành công!</h2>
                 <p class="mb-6 text-gray-600">Đã thu tiền và xuất vé.</p>
@@ -150,6 +152,16 @@
                         <div><strong>Rạp:</strong> <span x-text="selectedRoomName"></span></div>
                         <div><strong>Giờ chiếu:</strong> <span x-text="selectedShowtimeTime"></span></div>
                         <div><strong>Ghế:</strong> <span x-text="selectedSeatNames"></span></div>
+                        <template x-if="selectedItems.length > 0">
+                            <div>
+                                <strong>Bắp nước:</strong>
+                                <ul class="list-disc pl-5 mt-1">
+                                    <template x-for="item in selectedItems" :key="item.id">
+                                        <li><span x-text="item.name"></span> x<span x-text="item.quantity"></span></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
@@ -384,6 +396,7 @@
             }));
         });
     </script>
+    </div>
     @endif
 </div>
 @endsection

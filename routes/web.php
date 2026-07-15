@@ -30,6 +30,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/', [\App\Http\Controllers\Web\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard', [\App\Http\Controllers\Web\Admin\DashboardController::class, 'index']);
     Route::get('reports', [\App\Http\Controllers\Web\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/export/date', [\App\Http\Controllers\Web\Admin\ReportController::class, 'exportRevenueByDate'])->name('reports.export.date');
+    Route::get('reports/export/movie', [\App\Http\Controllers\Web\Admin\ReportController::class, 'exportRevenueByMovie'])->name('reports.export.movie');
     Route::resource('users', \App\Http\Controllers\Web\Admin\UserController::class);
     Route::resource('movies', \App\Http\Controllers\Web\Admin\MovieController::class);
     Route::resource('tags', \App\Http\Controllers\Web\Admin\TagController::class)->except(['create', 'show', 'edit']);

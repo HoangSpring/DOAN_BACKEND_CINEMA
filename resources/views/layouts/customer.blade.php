@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
 </head>
 
 <body class="antialiased min-h-screen flex flex-col font-body bg-dark text-white"
@@ -24,27 +23,38 @@
             </a>
 
             <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold tracking-wide">
-                @php $currentStatus = request('status', 'showing'); @endphp
+                @php $currentStatus = request('status'); @endphp
+
+                {{-- 1. Trang chủ: Chỉ sáng khi KHÔNG có tham số status trên URL và không ở trang vé của tôi --}}
                 <a href="{{ route('home') }}"
-                    class="transition-colors duration-300 hover:text-primary {{ $currentStatus === 'showing' && !request()->has('status') ? 'text-primary font-bold' : 'text-slate-300' }}">Trang
-                    chủ</a>
+                    class="transition-colors duration-300 hover:text-primary {{ is_null($currentStatus) && !request()->routeIs('my-tickets') ? 'text-primary font-bold' : 'text-slate-400' }}">
+                    Trang chủ
+                </a>
+
+                {{-- 2. Phim đang chiếu: Chỉ sáng khi status chính xác là 'showing' --}}
                 <a href="{{ route('home', ['status' => 'showing']) }}"
-                    class="transition-colors duration-300 hover:text-primary {{ $currentStatus === 'showing' ? 'text-primary font-bold' : 'text-slate-400' }}">Phim
-                    đang chiếu</a>
+                    class="transition-colors duration-300 hover:text-primary {{ $currentStatus === 'showing' ? 'text-primary font-bold' : 'text-slate-400' }}">
+                    Phim đang chiếu
+                </a>
+
+                {{-- 3. Phim sắp chiếu: Chỉ sáng khi status chính xác là 'coming_soon' --}}
                 <a href="{{ route('home', ['status' => 'coming_soon']) }}"
-                    class="transition-colors duration-300 hover:text-primary {{ $currentStatus === 'coming_soon' ? 'text-primary font-bold' : 'text-slate-400' }}">Phim
-                    sắp chiếu</a>
+                    class="transition-colors duration-300 hover:text-primary {{ $currentStatus === 'coming_soon' ? 'text-primary font-bold' : 'text-slate-400' }}">
+                    Phim sắp chiếu
+                </a>
+
                 @auth
                     <a href="{{ route('my-tickets') }}"
-                        class="transition-colors duration-300 hover:text-primary {{ request()->routeIs('my-tickets') ? 'text-primary font-bold' : 'text-slate-400' }}">Vé
-                        của tôi</a>
+                        class="transition-colors duration-300 hover:text-primary {{ request()->routeIs('my-tickets') ? 'text-primary font-bold' : 'text-slate-400' }}">
+                        Vé của tôi
+                    </a>
                 @endauth
             </nav>
 
             <div class="flex items-center space-x-4 relative" x-data="{ open: false }">
                 @auth
                     @if(in_array(auth()->user()->role, ['admin', 'staff']))
-                        <a href="{{ auth()->user()->role === 'admin' ? route('admin.reports.index') : route('staff.counter') }}"
+                        <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('staff.counter') }}"
                             class="hidden sm:inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary hover:bg-primary/20 transition duration-300">
                             {{ auth()->user()->role === 'admin' ? 'Trang quản trị' : 'Giao diện nhân viên' }}
                         </a>
@@ -71,7 +81,7 @@
                         </div>
                         <div class="h-px bg-dark-border my-1"></div>
                         @if(auth()->user()->role === 'admin')
-                            <a href="{{ route('admin.reports.index') }}"
+                            <a href="{{ route('admin.dashboard') }}"
                                 class="block rounded-xl px-3 py-2 text-sm text-slate-200 hover:bg-black/40 hover:text-primary transition">Trang
                                 quản trị</a>
                         @endif
@@ -173,7 +183,7 @@
                         </li>
                         <li class="flex items-center gap-3.5">
                             <i class="fas fa-clock text-primary"></i>
-                            <span>Giờ làm việc: 8:00 - 22:00</span>
+                            <span>Giờ làm việc: 8:00 - 23:30</span>
                         </li>
                         <li class="flex items-center gap-3.5">
                             <i class="fas fa-envelope text-primary"></i>
@@ -206,12 +216,7 @@
                             Zalo
                         </a>
                     </div>
-                    <div class="opacity-80 hover:opacity-100 transition-opacity">
-                        <img src="https://hotro.tiki.vn/hc/article_attachments/900003058863/bct.png"
-                            alt="Đã Thông Báo BCT" class="h-10">
-                    </div>
                 </div>
-
             </div>
 
             <div

@@ -94,4 +94,82 @@ class ReportController extends Controller
 
         return $formattedTopRows;
     }
+
+    public function exportRevenueByDate(Request $request)
+    {
+        $from = $request->query('from', Carbon::now()->subDays(30)->toDateString());
+        $to = $request->query('to', Carbon::now()->toDateString());
+        $groupBy = $request->query('group_by', 'day');
+
+        $selectClause = $groupBy === 'month' 
+            ? "DATE_FORMAT(p.paid_at, '%Y-%m') AS label" 
+            : "DATE(p.paid_at) AS label";
+
+        $groupByClause = $groupBy === 'month' 
+            ? "DATE_FORMAT(p.paid_at, '%Y-%m')" 
+            : "DATE(p.paid_at)";
+
+        $rows = DB::select("
+            SELECT {$selectClause}, SUM(p.amount) AS revenue, COUNT(*) AS total_orders
+            FROM payments p
+            WHERE p.status = 'success' AND p.paid_at BETWEEN :from AND :to
+            GROUP BY {$groupByClause}
+            ORDER BY label ASC
+        ", [
+            'from' => $from . ' 00:00:00',
+            'to' => $to . ' 23:59:59'
+        ]);
+
+        return response()->streamDownload(function() use($rows) {
+            $file = fopen('php://output', 'w');
+            fputs($file, chr(239) . chr(187) . chr(191)); // UTF-8 BOM
+            fputcsv($file, ['Ngày/Tháng', 'Doanh thu', 'Tổng số hóa đơn']);
+
+            foreach ($rows as $row) {
+                fputcsv($file, [
+                    $row->label,
+                    $row->revenue,
+                    $row->total_orders
+                ]);
+            }
+
+            fclose($file);
+        }, 'doanh_thu_theo_ngay_thang.csv');
+    }
+
+    public function exportRevenueByMovie(Request $request)
+    {
+        $from = $request->query('from', Carbon::now()->subDays(30)->toDateString());
+        $to = $request->query('to', Carbon::now()->toDateString());
+
+        $rows = DB::select("
+            SELECT m.title AS label, SUM(p.amount) AS revenue, COUNT(DISTINCT b.id) AS total_bookings
+            FROM payments p
+            JOIN bookings b ON b.id = p.booking_id
+            JOIN showtimes st ON st.id = b.showtime_id
+            JOIN movies m ON m.id = st.movie_id
+            WHERE p.status = 'success' AND p.paid_at BETWEEN :from AND :to
+            GROUP BY m.id, m.title
+            ORDER BY revenue DESC
+        ", [
+            'from' => $from . ' 00:00:00',
+            'to' => $to . ' 23:59:59'
+        ]);
+
+        return response()->streamDownload(function() use($rows) {
+            $file = fopen('php://output', 'w');
+            fputs($file, chr(239) . chr(187) . chr(191)); // UTF-8 BOM
+            fputcsv($file, ['Tên phim', 'Doanh thu', 'Tổng số vé đặt']);
+
+            foreach ($rows as $row) {
+                fputcsv($file, [
+                    $row->label,
+                    $row->revenue,
+                    $row->total_bookings
+                ]);
+            }
+
+            fclose($file);
+        }, 'doanh_thu_theo_phim.csv');
+    }
 }

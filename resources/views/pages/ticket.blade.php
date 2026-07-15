@@ -45,7 +45,7 @@
                 <div class="flex flex-wrap gap-2">
                     @foreach($booking->bookingSeats as $bSeat)
                         <span class="inline-block bg-red-100 text-red-800 font-bold px-3 py-1 rounded border border-red-200">
-                            {{ $bSeat->showtimeSeat->seat->row }}{{ $bSeat->showtimeSeat->seat->number }}
+                            {{ $bSeat->showtimeSeat->seat->seat_row }}{{ $bSeat->showtimeSeat->seat->seat_number }}
                         </span>
                     @endforeach
                 </div>

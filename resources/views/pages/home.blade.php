@@ -210,6 +210,80 @@
                 @endforelse
             </div>
         </div>
+
+        {{-- ============ GOOGLE MAPS & THÔNG TIN LIÊN HỆ (BẢN ĐỒ TO & HIỂN THỊ 100%) ============ --}}
+<section class="border-t border-dark-border bg-dark-card/40 mt-16">
+    <div class="container mx-auto px-4 py-16">
+        <div class="mb-10 text-center md:text-left">
+            <p class="text-xs uppercase tracking-[0.35em] text-primary/80 mb-3 font-body">Ghé thăm chúng tôi</p>
+            <h2 class="text-3xl md:text-4xl font-marquee tracking-tight text-white">Vị Trí Rạp Chiếu</h2>
+        </div>
+
+        {{-- Layout 12 cột giúp tối ưu diện tích bản đồ --}}
+        <div class="grid gap-8 lg:grid-cols-12">
+
+            {{-- Thông tin liên hệ (4/12 cột) --}}
+            <div class="lg:col-span-4 flex flex-col gap-6 font-body justify-center">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                        <i class="fas fa-location-dot text-primary"></i>
+                    </div>
+                    <div>
+                        <p class="text-white font-semibold mb-1">Địa chỉ rạp</p>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                           176 Trần Phú, phường Phước Vĩnh, TP. Huế
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                        <i class="fas fa-phone text-primary"></i>
+                    </div>
+                    <div>
+                        <p class="text-white font-semibold mb-1">Hotline đặt vé</p>
+                        <p class="text-slate-400 text-sm">1900 1234</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                        <i class="fas fa-clock text-primary"></i>
+                    </div>
+                    <div>
+                        <p class="text-white font-semibold mb-1">Giờ mở cửa</p>
+                        <p class="text-slate-400 text-sm">08:00 — 23:30 (Tất cả các ngày trong tuần)</p>
+                    </div>
+                </div>
+
+                <a href="https://www.google.com/maps/dir/?api=1&destination=16.4423,107.5878"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn-secondary self-start mt-2">
+                    <i class="fas fa-diamond-turn-right mr-2"></i> Chỉ đường
+                </a>
+            </div>
+
+            {{-- Bản đồ Google Maps To hơn & Sáng nguyên bản (8/12 cột) --}}
+            <div class="lg:col-span-8">
+    <div class="rounded-3xl overflow-hidden border border-dark-border h-[400px] md:h-[500px] min-h-[400px] md:min-h-[500px] relative shadow-2xl">
+        <iframe
+            src="https://maps.google.com/maps?q=Trường+Đại+học+Phú+Xuân+Huế&output=embed"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            class="absolute inset-0 w-full h-full">
+        </iframe>
+    </div>
+</div>
+
+        </div>
+    </div>
+</section>  
+        {{-- ============ HẾT GOOGLE MAPS ============ --}}
+
     </div>
 
     <script>
