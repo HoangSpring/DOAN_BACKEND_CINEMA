@@ -7,9 +7,34 @@
 </div>
 
 <div class="bg-white rounded-lg shadow mb-6 p-4">
-    <form method="GET" action="{{ route('admin.movies.index') }}" class="flex gap-2">
-        <input type="text" name="search" placeholder="Tìm kiếm phim..." value="{{ request('search') }}" class="w-full px-4 py-2 border rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-        <button type="submit" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Tìm</button>
+    <form method="GET" action="{{ route('admin.movies.index') }}" class="flex flex-wrap md:flex-nowrap gap-2">
+        <input type="text" name="search" placeholder="Tìm kiếm phim..." value="{{ request('search') }}" class="flex-grow px-4 py-2 border rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 min-w-[200px]">
+        
+        <select name="duration" class="px-4 py-2 border rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-gray-700">
+            <option value="">Tất cả thời lượng</option>
+            <option value="short" {{ request('duration') == 'short' ? 'selected' : '' }}>Dưới 90 phút</option>
+            <option value="medium" {{ request('duration') == 'medium' ? 'selected' : '' }}>90 - 120 phút</option>
+            <option value="long" {{ request('duration') == 'long' ? 'selected' : '' }}>Trên 120 phút</option>
+        </select>
+        
+        <select name="age_rating" class="px-4 py-2 border rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-gray-700">
+            <option value="">Tất cả phân loại</option>
+            <option value="P" {{ request('age_rating') == 'P' ? 'selected' : '' }}>P (Mọi độ tuổi)</option>
+            <option value="K" {{ request('age_rating') == 'K' ? 'selected' : '' }}>K (Dưới 13T có người lớn)</option>
+            <option value="T13" {{ request('age_rating') == 'T13' ? 'selected' : '' }}>T13 (Từ 13T)</option>
+            <option value="T16" {{ request('age_rating') == 'T16' ? 'selected' : '' }}>T16 (Từ 16T)</option>
+            <option value="T18" {{ request('age_rating') == 'T18' ? 'selected' : '' }}>T18 (Từ 18T)</option>
+        </select>
+        
+        <select name="status" class="px-4 py-2 border rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-gray-700">
+            <option value="">Tất cả trạng thái</option>
+            <option value="showing" {{ request('status') == 'showing' ? 'selected' : '' }}>Đang chiếu</option>
+            <option value="coming_soon" {{ request('status') == 'coming_soon' ? 'selected' : '' }}>Sắp chiếu</option>
+            <option value="ended" {{ request('status') == 'ended' ? 'selected' : '' }}>Đã kết thúc</option>
+        </select>
+        
+        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-500 whitespace-nowrap">Lọc</button>
+        <a href="{{ route('admin.movies.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 whitespace-nowrap">Xóa</a>
     </form>
 </div>
 

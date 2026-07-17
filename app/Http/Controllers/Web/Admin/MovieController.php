@@ -13,10 +13,29 @@ class MovieController extends Controller
     public function index(Request $request)
     {
         $query = Movie::with('tags');
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->search != '') {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
-        $movies = $query->paginate(10);
+        
+        if ($request->has('duration') && $request->duration != '') {
+            if ($request->duration === 'short') {
+                $query->where('duration_minutes', '<', 90);
+            } elseif ($request->duration === 'medium') {
+                $query->whereBetween('duration_minutes', [90, 120]);
+            } elseif ($request->duration === 'long') {
+                $query->where('duration_minutes', '>', 120);
+            }
+        }
+
+        if ($request->has('age_rating') && $request->age_rating != '') {
+            $query->where('age_rating', $request->age_rating);
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        $movies = $query->latest()->paginate(10)->withQueryString();
         return view('admin.movies.index', compact('movies'));
     }
 

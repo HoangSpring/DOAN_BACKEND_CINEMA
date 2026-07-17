@@ -35,7 +35,7 @@ class ShowtimeController extends Controller
 
     public function create()
     {
-        $movies = Movie::where('status', '!=', 'ended')->get();
+        $movies = Movie::where('status', 'showing')->get();
         $rooms = Room::all();
         return view('admin.showtimes.create', compact('movies', 'rooms'));
     }

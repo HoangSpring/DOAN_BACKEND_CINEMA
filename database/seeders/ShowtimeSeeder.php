@@ -29,16 +29,17 @@ class ShowtimeSeeder extends Seeder
 
         DB::transaction(function () use ($movies, $rooms) {
             foreach ($movies as $movie) {
-                // Generate 2-3 showtimes for each movie
-                $numShowtimes = rand(2, 3);
+                // Generate 5-8 showtimes for each movie
+                $numShowtimes = rand(5, 8);
 
                 for ($i = 0; $i < $numShowtimes; $i++) {
                     $room = $rooms->random();
                     
-                    // random start time in next 7 days, between 8:00 and 22:00
+                    // random start time from 15 days ago to 15 days in future
                     $startHour = rand(8, 22);
                     $startMinute = rand(0, 1) * 30; // 0 or 30
-                    $startDate = Carbon::now()->addDays(rand(1, 7))->setTime($startHour, $startMinute);
+                    $daysOffset = rand(-15, 15);
+                    $startDate = Carbon::now()->addDays($daysOffset)->setTime($startHour, $startMinute);
                     $endDate = $startDate->copy()->addMinutes($movie->duration_minutes + 15); // + 15 mins for cleaning
 
                     // Check overlap

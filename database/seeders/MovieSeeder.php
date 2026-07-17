@@ -38,8 +38,8 @@ class MovieSeeder extends Seeder
         $movie1->tags()->attach(Tag::whereIn('slug', ['khoa-hoc-vien-tuong', 'hanh-dong', 'dang-hot'])->pluck('id'));
         $movie2->tags()->attach(Tag::whereIn('slug', ['tam-ly', 'de-cu-oscar'])->pluck('id'));
 
-        // 6 factory movies
-        $movies = Movie::factory()->count(6)->create();
+        // 18 factory movies
+        $movies = Movie::factory()->count(18)->create();
         
         $tags = Tag::all();
         foreach ($movies as $movie) {

@@ -1,21 +1,10 @@
-﻿@extends('layouts.customer')
+@extends('layouts.customer')
 
 @section('content')
 
     <div class="min-h-screen bg-dark text-white font-body">
 
         {{-- ============ HERO: chuyển cảnh trailer theo phim ============ --}}
-        {{--
-        Dùng 4 phim đầu trong $movies (danh sách đang hiển thị theo bộ lọc status).
-        Phim nào chưa có trailer_url sẽ tự hiện poster thay video (không lỗi).
-        Muốn hero luôn lấy đúng phim "đang chiếu" bất kể đang lọc tab nào, có thể sau
-        này đổi $movies->take(4) thành 1 biến $featuredMovies riêng truyền từ Controller.
-
-        BỐ CỤC MỚI (Cách A): toàn bộ chữ dời xuống góc dưới-trái, căn trái, chỉ phủ tối
-        khoảng 1/3 dưới màn hình. Phần trên/giữa khung hình luôn sáng rõ, không còn phụ
-        thuộc vào trailer đang chiếu cảnh gì ở giữa khung hình (logo hãng phim, tiêu đề
-        phim...) vì chữ web không còn nằm ở vùng đó nữa.
-        --}}
         @if($movies->count() > 0)
             <section x-data="cinemaTrailerHero(@js($movies->take(4)->map(fn($m) => [
                 'id' => $m->id,
@@ -40,12 +29,12 @@
                     </div>
                 </template>
 
-                {{-- Lớp phủ chỉ tối ở khoảng 1/3 dưới màn hình, phần trên/giữa để trong hoàn toàn --}}
+                {{-- Lớp phủ --}}
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 via-40% to-transparent to-70% pointer-events-none"></div>
 
                 <div class="relative z-10 flex flex-col justify-end h-full px-5 sm:px-10 md:px-16 pb-10 sm:pb-14 gap-6">
 
-                    {{-- Khối nội dung chính: căn trái, neo ở dưới --}}
+                    {{-- Khối nội dung chính --}}
                     <div class="max-w-2xl flex flex-col items-start gap-4 text-left">
                         <span class="font-body text-primary text-xs sm:text-sm tracking-[0.3em] uppercase drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
                             Hơn 20 phim đang chiếu mỗi tuần trên toàn hệ thống
@@ -65,7 +54,7 @@
                         </a>
                     </div>
 
-                    {{-- Thanh điều hướng chọn phim: căn trái, cùng cột với nội dung chính --}}
+                    {{-- Thanh điều hướng chọn phim --}}
                     <div class="flex flex-wrap gap-x-6 gap-y-2 font-body">
                         <template x-for="(movie, i) in movies" :key="movie.id">
                             <button @click="switchTo(i)"
@@ -77,7 +66,7 @@
                         </template>
                     </div>
 
-                    {{-- Dòng thông số: căn trái, cùng cột, mờ nhẹ hơn vì là thông tin phụ --}}
+                    {{-- Dòng thông số --}}
                     <div class="flex flex-wrap gap-x-3 sm:gap-x-4 gap-y-1 font-body text-white/60 text-xs sm:text-sm font-light tracking-wide drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
                         <span>20+ Phim Đang Chiếu</span>
                         <span class="hidden sm:inline text-white/25">|</span>
@@ -92,7 +81,8 @@
         @endif
         {{-- ============ HẾT HERO ============ --}}
 
-        <div id="danh-sach-phim" class="container mx-auto px-4 py-16">
+        {{-- CONTAINER --}}
+        <div id="danh-sach-phim" class="w-full max-w-7xl mx-auto px-6 sm:px-12 py-16">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between mb-12">
                 <div>
                     <p class="text-xs uppercase tracking-[0.35em] text-primary/80 mb-3 font-body">Lịch chiếu rạp</p>
@@ -115,92 +105,148 @@
                 </div>
             </div>
 
-            <div class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
+            {{-- GRID --}}
+            <div class="grid gap-8 md:grid-cols-2">
                 @forelse($movies as $movie)
-                    <article class="group overflow-hidden rounded-[2rem] border border-dark-border bg-dark-card shadow-2xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] font-body">
-                        
-                        {{-- Poster phim bọc hiệu ứng thiết kế mới --}}
-                        <a href="{{ route('movies.show', $movie->id) }}" class="block poster-card rounded-b-none">
+                    <article x-data="{ expandedDates: false }"
+                        class="group flex flex-row gap-5 rounded-2xl border border-dark-border bg-dark-card p-5 shadow-2xl transition-all duration-300 hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] font-body w-full">
+
+                        {{-- Poster bên trái --}}
+                        <a href="{{ route('movies.show', $movie->id) }}" class="shrink-0 w-36 sm:w-44 md:w-48 overflow-hidden rounded-xl bg-black aspect-[2/3] shadow-lg">
                             <img src="{{ $movie->poster_url ?? 'https://picsum.photos/seed/' . $movie->id . '/760/1080' }}"
                                 alt="{{ $movie->title }}"
-                                class="h-96 w-full object-cover transition duration-500 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent"></div>
-                            <div class="absolute left-4 bottom-4 rounded-full bg-black/80 backdrop-blur-sm border border-white/10 px-3 py-1.5 text-xs uppercase tracking-[0.2em] text-slate-200">
-                                {{ $movie->status === 'coming_soon' ? 'Sắp chiếu' : 'Đang chiếu' }}
-                            </div>
+                                class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
                         </a>
 
-                        <div class="space-y-6 p-6">
-                            <div class="flex flex-col gap-4">
-                                <div class="flex items-start justify-between gap-4">
-                                    <div>
-                                        <h2 class="text-2xl font-marquee text-white tracking-wide leading-tight">{{ $movie->title }}</h2>
-                                        <p class="mt-1 text-slate-400 text-sm font-light">{{ $movie->genre ?? 'Phim điện ảnh' }}</p>
-                                    </div>
-                                    <span class="rounded-full border border-dark-border bg-black/60 px-3 py-1 text-xs uppercase tracking-[0.15em] text-slate-300 font-medium">
-                                        {{ $movie->duration_minutes }} phút
-                                    </span>
-                                </div>
-
-                                <div class="flex flex-wrap gap-2">
+                        {{-- Thông tin phim bên phải --}}
+                        <div class="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                                @php
+                                    $ageColors = [
+                                        'P'   => ['badge' => 'bg-emerald-600', 'warnText' => 'text-emerald-300', 'warnBg' => 'bg-emerald-950/40', 'warnBorder' => 'border-emerald-900/50'],
+                                        'K'   => ['badge' => 'bg-blue-600', 'warnText' => 'text-blue-300', 'warnBg' => 'bg-blue-950/40', 'warnBorder' => 'border-blue-900/50'],
+                                        'T13' => ['badge' => 'bg-amber-500', 'warnText' => 'text-amber-300', 'warnBg' => 'bg-amber-950/40', 'warnBorder' => 'border-amber-900/50'],
+                                        'T16' => ['badge' => 'bg-orange-500', 'warnText' => 'text-orange-300', 'warnBg' => 'bg-orange-950/40', 'warnBorder' => 'border-orange-900/50'],
+                                        'T18' => ['badge' => 'bg-red-600', 'warnText' => 'text-red-300', 'warnBg' => 'bg-red-950/40', 'warnBorder' => 'border-red-900/50'],
+                                    ];
+                                    $ac = $ageColors[$movie->age_rating] ?? ['badge' => 'bg-slate-600', 'warnText' => 'text-slate-300', 'warnBg' => 'bg-slate-800/40', 'warnBorder' => 'border-slate-700/50'];
+                                @endphp
+                                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                    <a href="{{ route('movies.show', $movie->id) }}">
+                                        <h2 class="text-base sm:text-lg md:text-xl font-marquee text-white uppercase tracking-wide hover:text-primary transition-colors leading-tight line-clamp-2">
+                                            {{ $movie->title }}
+                                        </h2>
+                                    </a>
                                     @if($movie->age_rating)
-                                        <span class="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-red-400 font-semibold">
+                                        <span class="{{ $ac['badge'] }} text-white text-[10px] sm:text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider shrink-0">
                                             {{ $movie->age_rating }}
                                         </span>
                                     @endif
-                                    @foreach($movie->tags->take(2) as $tag)
-                                        <span class="rounded-full border border-dark-border bg-black/40 px-3 py-1 text-[11px] text-slate-400 font-light">
-                                            {{ $tag->name }}
-                                        </span>
-                                    @endforeach
                                 </div>
-                            </div>
 
-                            {{-- Khối suất chiếu dạng Kính mờ Liquid Glass --}}
-                            <div class="space-y-4">
-                                @if($movie->showtimes->count())
+                                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 mb-2">
+                                    @if($movie->genre)
+                                        <span class="flex items-center gap-1.5">
+                                            <i class="fas fa-tag text-primary text-[10px]"></i> {{ $movie->genre }}
+                                        </span>
+                                    @endif
+                                    <span class="flex items-center gap-1.5">
+                                        <i class="fas fa-clock text-primary text-[10px]"></i> {{ $movie->duration_minutes }} phút
+                                    </span>
+                                    @if($movie->country)
+                                        <span class="flex items-center gap-1.5">
+                                            <i class="fas fa-globe text-primary text-[10px]"></i> {{ $movie->country }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                @if($movie->subtitle_type && $movie->subtitle_type !== 'none')
+                                    <div class="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
+                                        <i class="fas fa-closed-captioning text-primary text-[10px]"></i>
+                                        {{ $movie->subtitle_type === 'dubbed' ? 'Lồng tiếng' : 'Phụ đề' }}
+                                    </div>
+                                @endif
+
+                                @if($movie->age_rating)
                                     @php
-                                        $groupedShowtimes = $movie->showtimes->groupBy(fn($showtime) => $showtime->start_time->locale('vi')->isoFormat('dddd, DD/MM'));
+                                        $ageWarnings = [
+                                            'P'   => 'P: Phim được phép phổ biến rộng rãi đến mọi lứa tuổi.',
+                                            'K'   => 'K: Phim phổ biến đến khán giả dưới 13 tuổi có người giám hộ đi kèm.',
+                                            'T13' => 'T13: Phim dành cho khán giả từ đủ 13 tuổi trở lên (13+).',
+                                            'T16' => 'T16: Phim dành cho khán giả từ đủ 16 tuổi trở lên (16+).',
+                                            'T18' => 'T18: Phim dành cho khán giả từ đủ 18 tuổi trở lên (18+).',
+                                        ];
                                     @endphp
-                                    @foreach($groupedShowtimes as $dateLabel => $showtimes)
-                                        <div class="liquid-glass rounded-2xl p-4 border border-white/5">
-                                            <div class="flex items-center justify-between text-sm font-semibold text-slate-200 mb-3">
-                                                <span class="capitalize">{{ $dateLabel }}</span>
-                                                <span class="text-primary text-xs tracking-wider">{{ $showtimes->count() }} suất chiếu</span>
-                                            </div>
-                                            <div class="grid grid-cols-2 gap-3">
-                                                @foreach($showtimes as $showtime)
-                                                    <a href="{{ url('/showtimes/' . $showtime->id . '/seats') }}"
-                                                        class="rounded-xl border border-white/5 bg-black/40 px-3 py-2 text-center text-sm text-slate-300 transition-all duration-300 hover:border-primary hover:text-primary hover:scale-[1.03]">
-                                                        {{ $showtime->start_time->format('H:i') }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div class="rounded-2xl border border-dark-border bg-black/25 p-4 text-slate-500 text-sm font-light">
-                                        Chưa có lịch chiếu sẵn sàng.
+                                    <div class="flex items-start gap-1.5 text-[10px] sm:text-xs {{ $ac['warnText'] }} {{ $ac['warnBg'] }} {{ $ac['warnBorder'] }} border rounded-lg p-2 mb-3 leading-snug">
+                                        <i class="fas fa-user-shield mt-0.5 shrink-0"></i>
+                                        <span>{{ $ageWarnings[$movie->age_rating] ?? '' }}</span>
                                     </div>
                                 @endif
                             </div>
 
-                            <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
-                                <div class="flex flex-wrap gap-2">
-                                    <a href="{{ route('movies.show', $movie->id) }}" class="btn-secondary text-xs px-5 py-2.5">
-                                        Chi tiết
-                                    </a>
-                                    @if($movie->trailer_url)
-                                        <button @click.prevent="trailerUrl = '{{ $movie->trailer_url }}'; showTrailer = true"
-                                            class="inline-flex items-center gap-2 rounded-full bg-dark-card border border-dark-border px-5 py-2.5 text-xs font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:border-white/20">
-                                            <i class="fas fa-play text-[10px] text-primary"></i> Xem Trailer
-                                        </button>
-                                    @endif
+                            {{-- Lịch chiếu xếp ngang mượt mà --}}
+                            @if($movie->showtimes->count())
+                                @php
+                                    $today = \Carbon\Carbon::today();
+                                    $tomorrow = \Carbon\Carbon::tomorrow()->endOfDay();
+                                    
+                                    $filteredShowtimes = $movie->showtimes->filter(function($s) use ($today, $tomorrow) {
+                                        return $s->start_time->between($today, $tomorrow);
+                                    });
+
+                                    $groupedByDate = $filteredShowtimes
+                                        ->sortBy('start_time')
+                                        ->groupBy(fn($s) => $s->start_time->locale('vi')->isoFormat('dddd, DD/MM/YYYY'));
+                                @endphp
+
+                                @if($groupedByDate->isNotEmpty())
+                                    <div class="space-y-3 mt-auto">
+                                        @foreach($groupedByDate as $dateLabel => $showtimesOfDate)
+                                            <div class="border border-white/5 rounded-xl overflow-hidden">
+                                                <div class="flex items-center justify-between px-3 py-1.5 bg-black/30 text-[11px] sm:text-xs font-semibold text-slate-200">
+                                                    <span class="capitalize">{{ $dateLabel }}</span>
+                                                </div>
+                                                
+                                                {{-- Toàn bộ các phòng và giờ chiếu sẽ flex ngang hàng --}}
+                                                <div class="p-3 flex flex-wrap gap-x-6 gap-y-3 items-start">
+                                                    @foreach($showtimesOfDate->groupBy(fn($s) => $s->room->name) as $roomName => $showtimesOfRoom)
+                                                        <div class="flex flex-col gap-1.5 shrink-0">
+                                                            <p class="text-[10px] font-black uppercase tracking-wider text-primary">{{ $roomName }}</p>
+                                                            <div class="flex flex-wrap gap-1.5">
+                                                                @foreach($showtimesOfRoom as $showtime)
+                                                                    @if(\Carbon\Carbon::now()->greaterThan($showtime->start_time))
+                                                                        <span class="border border-slate-700/50 text-slate-500 bg-slate-800/30 text-xs font-bold px-2.5 py-1 rounded-lg cursor-not-allowed opacity-50">
+                                                                            {{ $showtime->start_time->format('H:i') }}
+                                                                        </span>
+                                                                    @else
+                                                                        <a href="{{ url('/showtimes/' . $showtime->id . '/seats') }}"
+                                                                            class="border border-slate-700 hover:border-primary hover:text-primary text-slate-300 text-xs font-bold px-2.5 py-1 rounded-lg transition-colors">
+                                                                            {{ $showtime->start_time->format('H:i') }}
+                                                                        </a>
+                                                                    @endif
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="rounded-xl border border-dark-border bg-black/25 p-3 text-slate-500 text-xs font-light mt-auto">
+                                        Chưa có lịch chiếu trong hôm nay và ngày mai.
+                                    </div>
+                                @endif
+
+                                <a href="{{ route('movies.show', $movie->id) }}#showtimes"
+                                    class="mt-2 text-xs font-bold text-primary hover:underline inline-flex items-center gap-1">
+                                    Xem thêm lịch chiếu
+                                </a>
+                            @else
+                                <div class="rounded-xl border border-dark-border bg-black/25 p-3 text-slate-500 text-xs font-light mt-auto">
+                                    Chưa có lịch chiếu sẵn sàng.
                                 </div>
-                                <span class="text-xs uppercase tracking-[0.2em] text-slate-500 font-medium">
-                                    {{ $movie->country ?? 'VN' }}
-                                </span>
-                            </div>
+                            @endif
                         </div>
                     </article>
                 @empty
@@ -211,77 +257,74 @@
             </div>
         </div>
 
-        {{-- ============ GOOGLE MAPS & THÔNG TIN LIÊN HỆ (BẢN ĐỒ TO & HIỂN THỊ 100%) ============ --}}
-<section class="border-t border-dark-border bg-dark-card/40 mt-16">
-    <div class="container mx-auto px-4 py-16">
-        <div class="mb-10 text-center md:text-left">
-            <p class="text-xs uppercase tracking-[0.35em] text-primary/80 mb-3 font-body">Ghé thăm chúng tôi</p>
-            <h2 class="text-3xl md:text-4xl font-marquee tracking-tight text-white">Vị Trí Rạp Chiếu</h2>
-        </div>
-
-        {{-- Layout 12 cột giúp tối ưu diện tích bản đồ --}}
-        <div class="grid gap-8 lg:grid-cols-12">
-
-            {{-- Thông tin liên hệ (4/12 cột) --}}
-            <div class="lg:col-span-4 flex flex-col gap-6 font-body justify-center">
-                <div class="flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
-                        <i class="fas fa-location-dot text-primary"></i>
-                    </div>
-                    <div>
-                        <p class="text-white font-semibold mb-1">Địa chỉ rạp</p>
-                        <p class="text-slate-400 text-sm leading-relaxed">
-                           176 Trần Phú, phường Phước Vĩnh, TP. Huế
-                        </p>
-                    </div>
+        {{-- ============ GOOGLE MAPS ============ --}}
+        <section class="border-t border-dark-border bg-dark-card/40 mt-16">
+            <div class="container mx-auto px-4 py-16">
+                <div class="mb-10 text-center md:text-left">
+                    <p class="text-xs uppercase tracking-[0.35em] text-primary/80 mb-3 font-body">Ghé thăm chúng tôi</p>
+                    <h2 class="text-3xl md:text-4xl font-marquee tracking-tight text-white">Vị Trí Rạp Chiếu</h2>
                 </div>
 
-                <div class="flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
-                        <i class="fas fa-phone text-primary"></i>
+                <div class="grid gap-8 lg:grid-cols-12">
+                    {{-- Thông tin liên hệ --}}
+                    <div class="lg:col-span-4 flex flex-col gap-6 font-body justify-center">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                                <i class="fas fa-location-dot text-primary"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-semibold mb-1">Địa chỉ rạp</p>
+                                <p class="text-slate-400 text-sm leading-relaxed">
+                                   176 Trần Phú, phường Phước Vĩnh, TP. Huế
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                                <i class="fas fa-phone text-primary"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-semibold mb-1">Hotline đặt vé</p>
+                                <p class="text-slate-400 text-sm">1900 1234</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                                <i class="fas fa-clock text-primary"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-semibold mb-1">Giờ mở cửa</p>
+                                <p class="text-slate-400 text-sm">08:00 — 23:30 (Tất cả các ngày trong tuần)</p>
+                            </div>
+                        </div>
+
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=16.4423,107.5878"
+                           target="_blank" rel="noopener noreferrer"
+                           class="btn-secondary self-start mt-2">
+                            <i class="fas fa-diamond-turn-right mr-2"></i> Chỉ đường
+                        </a>
                     </div>
-                    <div>
-                        <p class="text-white font-semibold mb-1">Hotline đặt vé</p>
-                        <p class="text-slate-400 text-sm">1900 1234</p>
+
+                    {{-- Bản đồ --}}
+                    <div class="lg:col-span-8">
+                        <div class="rounded-3xl overflow-hidden border border-dark-border h-[400px] md:h-[500px] min-h-[400px] md:min-h-[500px] relative shadow-2xl">
+                            <iframe
+                                src="https://maps.google.com/maps?q=Trường+Đại+học+Phú+Xuân+Huế&output=embed"
+                                width="100%"
+                                height="100%"
+                                style="border:0;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                class="absolute inset-0 w-full h-full">
+                            </iframe>
+                        </div>
                     </div>
                 </div>
-
-                <div class="flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
-                        <i class="fas fa-clock text-primary"></i>
-                    </div>
-                    <div>
-                        <p class="text-white font-semibold mb-1">Giờ mở cửa</p>
-                        <p class="text-slate-400 text-sm">08:00 — 23:30 (Tất cả các ngày trong tuần)</p>
-                    </div>
-                </div>
-
-                <a href="https://www.google.com/maps/dir/?api=1&destination=16.4423,107.5878"
-                   target="_blank" rel="noopener noreferrer"
-                   class="btn-secondary self-start mt-2">
-                    <i class="fas fa-diamond-turn-right mr-2"></i> Chỉ đường
-                </a>
             </div>
-
-            {{-- Bản đồ Google Maps To hơn & Sáng nguyên bản (8/12 cột) --}}
-            <div class="lg:col-span-8">
-    <div class="rounded-3xl overflow-hidden border border-dark-border h-[400px] md:h-[500px] min-h-[400px] md:min-h-[500px] relative shadow-2xl">
-        <iframe
-            src="https://maps.google.com/maps?q=Trường+Đại+học+Phú+Xuân+Huế&output=embed"
-            width="100%"
-            height="100%"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            class="absolute inset-0 w-full h-full">
-        </iframe>
-    </div>
-</div>
-
-        </div>
-    </div>
-</section>  
+        </section>  
         {{-- ============ HẾT GOOGLE MAPS ============ --}}
 
     </div>

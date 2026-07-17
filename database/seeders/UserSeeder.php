@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
             'role' => 'staff',
         ]);
 
-        // 10 Customer
-        User::factory()->count(10)->create(['role' => 'customer']);
+        // 30 Customer
+        User::factory()->count(30)->create(['role' => 'customer']);
     }
 }

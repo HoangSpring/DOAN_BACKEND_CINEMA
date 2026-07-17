@@ -10,7 +10,8 @@
 
             <!-- Movie Poster -->
             <div class="relative z-10 w-32 sm:w-48 shrink-0 mx-auto lg:mx-0 poster-card border-none">
-                <img src="{{ $showtime->movie->poster_url ?? 'https://via.placeholder.com/300x450' }}" alt="{{ $showtime->movie->title }}" class="w-full rounded-xl shadow-lg object-cover aspect-[2/3]">
+                <img src="{{ $showtime->movie->poster_url ?? 'https://via.placeholder.com/300x450' }}"
+                    alt="{{ $showtime->movie->title }}" class="w-full rounded-xl shadow-lg object-cover aspect-[2/3]">
             </div>
 
             <!-- Movie Info -->
@@ -19,11 +20,15 @@
                     class="text-2xl sm:text-3xl md:text-4xl font-marquee text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-4 tracking-wide">
                     {{ $showtime->movie->title }}
                 </h1>
-                
+
                 <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 text-sm mb-4">
-                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700 font-semibold">{{ $showtime->movie->age_rating }}</span>
-                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">{{ $showtime->movie->duration_minutes }} phút</span>
-                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Phòng: <strong class="text-white">{{ $showtime->room->name }}</strong></span>
+                    <span
+                        class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700 font-semibold">{{ $showtime->movie->age_rating }}</span>
+                    <span
+                        class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">{{ $showtime->movie->duration_minutes }}
+                        phút</span>
+                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Phòng: <strong
+                            class="text-white">{{ $showtime->room->name }}</strong></span>
                     <span class="bg-primary/20 text-primary px-3 py-1 rounded-full font-semibold border border-primary/30">
                         {{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i - d/m/Y') }}
                     </span>
@@ -38,33 +43,12 @@
                 <div class="text-slate-400 text-sm mb-4 line-clamp-3">
                     {{ $showtime->movie->description }}
                 </div>
-                
-                <div class="text-xs text-slate-500 space-y-1">
-                    <p><strong class="text-slate-300">Đạo diễn:</strong> {{ $showtime->movie->director ?: 'Đang cập nhật' }}</p>
-                    <p><strong class="text-slate-300">Diễn viên:</strong> {{ $showtime->movie->actors ?: 'Đang cập nhật' }}</p>
-                </div>
-            </div>
 
-            <!-- Seat Legend -->
-            <div
-                class="relative z-10 flex flex-wrap justify-center lg:flex-col gap-4 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800 shrink-0 self-center lg:self-stretch lg:justify-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-6 h-6 bg-slate-700 rounded-t-md rounded-b-sm shadow-inner border-t border-slate-600"></div>
-                    <span class="text-slate-400 text-xs font-medium">Trống</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-6 h-6 bg-primary rounded-t-md rounded-b-sm shadow-[0_0_10px_rgba(229,9,20,0.5)] border-t border-red-400"></div>
-                    <span class="text-white font-bold text-xs">Đang chọn</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-6 h-6 bg-slate-900 border border-slate-800 rounded-t-md rounded-b-sm opacity-50 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')]"></div>
-                    </div>
-                    <span class="text-slate-500 text-xs">Đã bán</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-6 h-6 bg-slate-700 border border-yellow-500 rounded-t-md rounded-b-sm shadow-[0_0_8px_rgba(234,179,8,0.2)]"></div>
-                    <span class="text-yellow-500 font-semibold text-xs">Ghế VIP</span>
+                <div class="text-xs text-slate-500 space-y-1">
+                    <p><strong class="text-slate-300">Đạo diễn:</strong> {{ $showtime->movie->director ?: 'Đang cập nhật' }}
+                    </p>
+                    <p><strong class="text-slate-300">Diễn viên:</strong> {{ $showtime->movie->actors ?: 'Đang cập nhật' }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -87,7 +71,7 @@
             <p class="text-slate-400 font-medium">Đang tải sơ đồ ghế...</p>
         </div>
 
-        <div x-show="!loading" class="overflow-x-auto pb-32 hide-scrollbar">
+        <div x-show="!loading" class="overflow-x-auto pb-12 hide-scrollbar">
             <div class="flex flex-col gap-3 mx-auto w-max min-w-full items-center">
                 <template x-for="(rowSeats, rowName) in groupedSeats()" :key="rowName">
                     <div class="flex items-center gap-4 group/row">
@@ -98,13 +82,16 @@
                             <template x-for="seat in rowSeats" :key="seat.id || seat.seat_id">
                                 <button @click="toggleSeat(seat)"
                                     :disabled="(seat.status !== 'available' && seat.status !== 'trống') && !isSelected(seat.id || seat.seat_id)"
-                                    class="w-10 h-10 sm:w-11 sm:h-11 rounded-t-xl rounded-b-md text-xs font-bold transition-all duration-300 relative group flex items-center justify-center disabled:cursor-not-allowed transform hover:-translate-y-1"
+                                    class="h-10 sm:h-11 rounded border-b-4 text-xs font-bold transition-all relative group flex items-center justify-center disabled:cursor-not-allowed"
                                     :class="{
-                                                                    'bg-primary text-white border-t-2 border-red-400 shadow-[0_5px_15px_rgba(229,9,20,0.4)] scale-110 z-10': isSelected(seat.id || seat.seat_id),
-                                                                    'bg-slate-900 border border-slate-800 text-slate-700 opacity-50': (seat.status !== 'available' && seat.status !== 'trống') && !isSelected(seat.id || seat.seat_id),
-                                                                    'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white border-t border-slate-500': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && !isVipSeat(seat),
-                                                                    'bg-slate-700 border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black shadow-[0_0_10px_rgba(234,179,8,0.1)]': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && isVipSeat(seat)
-                                                                }">
+                                            'seat-w-standard': !isCoupleSeat(seat),
+                                            'seat-w-couple': isCoupleSeat(seat),
+                                            'bg-green-500 border-green-700 text-white z-10': isSelected(seat.id || seat.seat_id),
+                                            'bg-red-500 border-red-700 text-white opacity-60': (seat.status !== 'available' && seat.status !== 'trống') && !isSelected(seat.id || seat.seat_id),
+                                            'bg-gray-200 border-gray-400 text-gray-800 hover:bg-gray-300': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && !isVipSeat(seat) && !isCoupleSeat(seat),
+                                            'bg-amber-500 border-amber-600 text-white hover:bg-amber-600': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && isVipSeat(seat),
+                                            'bg-fuchsia-500 border-fuchsia-600 text-white hover:bg-fuchsia-600': (seat.status === 'available' || seat.status === 'trống') && !isSelected(seat.id || seat.seat_id) && isCoupleSeat(seat)
+                                        }">
 
                                     <span x-text="seat.number"></span>
 
@@ -128,13 +115,39 @@
             </div>
         </div>
 
+        {{-- Chú thích sơ đồ ghế — dời xuống đây, ngay dưới sơ đồ, bố cục hàng ngang căn giữa --}}
+        <div x-show="!loading"
+            class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800 max-w-3xl mx-auto mb-20">
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-gray-200 border-b-4 border-gray-400 rounded"></div>
+                <span class="text-slate-400 text-xs font-medium">Standard</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-amber-500 border-b-4 border-amber-600 rounded"></div>
+                <span class="text-slate-400 text-xs font-medium">VIP</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-6 bg-fuchsia-500 border-b-4 border-fuchsia-600 rounded"></div>
+                <span class="text-slate-400 text-xs font-medium">Couple</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-red-500 border-b-4 border-red-700 rounded"></div>
+                <span class="text-slate-400 text-xs font-medium">Đã đặt</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-green-500 border-b-4 border-green-700 rounded"></div>
+                <span class="text-slate-400 text-xs font-medium">Đang chọn</span>
+            </div>
+        </div>
+
         <div class="max-w-4xl mx-auto mb-8 rounded-2xl border border-dark-border bg-dark-card p-5 shadow-xl liquid-glass">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
                     <h3 class="text-xl font-bold text-white">Đặt bắp nước & snack</h3>
                     <p class="text-sm text-slate-400">Thêm đồ ăn nhẹ để trải nghiệm xem phim trọn vẹn hơn.</p>
                 </div>
-                <div class="text-sm font-semibold text-primary">Tạm tính: <span x-text="formatCurrency(foodSubtotal)"></span></div>
+                <div class="text-sm font-semibold text-primary">Tạm tính: <span
+                        x-text="formatCurrency(foodSubtotal)"></span></div>
             </div>
 
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
@@ -150,9 +163,11 @@
                                 <p class="text-sm font-semibold text-primary mt-2" x-text="formatCurrency(item.price)"></p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button @click="removeItem(item)" class="w-8 h-8 rounded-full border border-slate-700 text-slate-300 hover:bg-slate-800">−</button>
+                                <button @click="removeItem(item)"
+                                    class="w-8 h-8 rounded-full border border-slate-700 text-slate-300 hover:bg-slate-800">−</button>
                                 <span class="w-8 text-center font-bold text-white" x-text="getItemQuantity(item.id)"></span>
-                                <button @click="addItem(item)" class="w-8 h-8 rounded-full border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20">+</button>
+                                <button @click="addItem(item)"
+                                    class="w-8 h-8 rounded-full border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20">+</button>
                             </div>
                         </div>
                     </div>
@@ -209,6 +224,24 @@
     </div>
 
     <style>
+        .seat-w-standard {
+            width: 2.5rem;
+        }
+
+        .seat-w-couple {
+            width: 5.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .seat-w-standard {
+                width: 2.75rem;
+            }
+
+            .seat-w-couple {
+                width: 6rem;
+            }
+        }
+
         .hide-scrollbar::-webkit-scrollbar {
             height: 8px;
         }
@@ -364,6 +397,10 @@
                     return (seat?.type || seat?.seat_type || seat?.seat?.seat_type || '').toLowerCase() === 'vip';
                 },
 
+                isCoupleSeat(seat) {
+                    return (seat?.type || seat?.seat_type || seat?.seat?.seat_type || '').toLowerCase() === 'couple';
+                },
+
                 get foodSubtotal() {
                     return this.selectedItems.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
                 },
@@ -381,7 +418,6 @@
                     setTimeout(() => this.error = '', 4000);
                 },
 
-                // TÁCH BIỆT HÀM SUBMIT KHỎI EVENT ĐỂ KHÔNG BỊ TRÙNG LẶP SỐ LIỆU CONSOLE
                 async submitBooking() {
                     if (this.selectedSeats.length === 0) return;
                     this.processing = true;

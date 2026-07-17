@@ -29,7 +29,8 @@
                                 <button 
                                     @click="openPopover({{ $seat->id }}, '{{ $seat->seat_row }}{{ $seat->seat_number }}', '{{ $seat->seat_type }}')"
                                     id="seat-btn-{{ $seat->id }}"
-                                    class="w-10 h-10 rounded-t-lg border-b-4 border-black/20 text-xs font-bold transition flex items-center justify-center text-white"
+                                    class="h-10 rounded-t-lg border-b-4 border-black/20 text-xs font-bold transition flex items-center justify-center text-white"
+                                    :style="getSeatType({{ $seat->id }}, '{{ $seat->seat_type }}') === 'couple' ? 'width: 5.5rem;' : 'width: 2.5rem;'"
                                     :class="{
                                         'bg-gray-400 hover:bg-gray-500': getSeatType({{ $seat->id }}, '{{ $seat->seat_type }}') === 'standard',
                                         'bg-red-500 hover:bg-red-600': getSeatType({{ $seat->id }}, '{{ $seat->seat_type }}') === 'vip',
@@ -51,7 +52,7 @@
     <div class="mt-12 flex justify-center gap-6 border-t pt-6">
         <div class="flex items-center gap-2"><div class="w-6 h-6 bg-gray-400 rounded-t border-b-2 border-black/20"></div><span class="text-sm">Standard</span></div>
         <div class="flex items-center gap-2"><div class="w-6 h-6 bg-red-500 rounded-t border-b-2 border-black/20"></div><span class="text-sm">VIP</span></div>
-        <div class="flex items-center gap-2"><div class="w-6 h-6 bg-pink-500 rounded-t border-b-2 border-black/20"></div><span class="text-sm">Couple</span></div>
+        <div class="flex items-center gap-2"><div class="w-12 h-6 bg-pink-500 rounded-t border-b-2 border-black/20"></div><span class="text-sm">Couple</span></div>
     </div>
 
     <!-- Popover for changing seat type -->
