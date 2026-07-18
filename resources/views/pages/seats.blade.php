@@ -426,7 +426,7 @@
                         const csrfToken = document.head.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
                         const targetSeatIds = this.selectedSeats.map(s => s.seat_id || s.id);
 
-                        const response = await fetch('/api/bookings/hold', {
+                        const response = await fetch('/bookings/hold', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

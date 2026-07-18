@@ -13,6 +13,7 @@ class StoreShowtimeRequest extends FormRequest
             'start_time' => ['required', 'date', 'after:now'],
             'price_standard' => ['required', 'numeric', 'min:0'],
             'price_vip' => ['required', 'numeric', 'min:0'],
+            'price_couple' => ['required', 'numeric', 'min:0'],
         ];
     }
 }

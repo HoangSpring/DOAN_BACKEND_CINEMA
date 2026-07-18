@@ -14,15 +14,20 @@ Route::post('/logout', [WebController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/showtimes/{showtime}/seats', [WebController::class, 'seats'])->name('showtimes.seats');
-    Route::get('/api/showtimes/{showtime}/seats', [WebController::class, 'seatsApi'])->name('api.showtimes.seats');
-    Route::post('/api/bookings/hold', [\App\Http\Controllers\BookingController::class, 'hold'])->name('bookings.hold');
-    Route::post('/api/bookings/{booking}/checkout', [\App\Http\Controllers\BookingController::class, 'checkout'])
-        ->middleware(\App\Http\Middleware\CheckIdempotencyKey::class);
     
+    // Booking Web Routes (No /api/ prefix to avoid conflict with Postman, uses web session auth)
+    Route::post('/bookings/hold', [\App\Http\Controllers\BookingController::class, 'hold'])->name('web.bookings.hold');
+    Route::post('/bookings/{booking}/checkout', [\App\Http\Controllers\BookingController::class, 'checkout'])
+        ->middleware(\App\Http\Middleware\CheckIdempotencyKey::class);
+
     // Prompt 14 routes
     Route::get('/checkout/{booking}', [WebController::class, 'checkout'])->name('checkout');
     Route::get('/tickets/{booking}', [WebController::class, 'ticket'])->name('tickets.show');
     Route::get('/my-tickets', [WebController::class, 'myTickets'])->name('my-tickets');
+    
+    // User Profile
+    Route::get('/profile', [WebController::class, 'profile'])->name('profile');
+    Route::put('/profile', [WebController::class, 'updateProfile'])->name('profile.update');
 });
 
 // Admin Web Routes (Prompt 16)
@@ -44,4 +49,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:admin,staff'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('counter', [\App\Http\Controllers\Web\StaffController::class, 'counter'])->name('counter');
     Route::get('checkin', [\App\Http\Controllers\Web\StaffController::class, 'checkin'])->name('checkin');
+    
+    // Booking actions for Staff Counter (Web session)
+    Route::post('bookings/counter', [\App\Http\Controllers\BookingController::class, 'counter'])
+        ->middleware(\App\Http\Middleware\CheckIdempotencyKey::class)->name('bookings.counter');
+    Route::post('bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('bookings.cancel');
 });

@@ -10,27 +10,37 @@ class CheckinController extends Controller
 {
     public function checkin(Request $request)
     {
-        $qrDataStr = $request->input('qr_data');
-        if (!$qrDataStr) {
-            return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Missing QR Data'], 400);
+        // 1. ƯU TIÊN KIỂM TRA XEM CÓ TRUYỀN BOOKING_ID TRỰC TIẾP ĐỂ TEST TRÊN POSTMAN KHÔNG
+        if ($request->has('booking_id')) {
+            $bookingId = $request->input('booking_id');
+        } else {
+            // 2. NẾU KHÔNG CÓ BOOKING_ID TRỰC TIẾP, CHẠY LOGIC GIẢI MÃ VÀ CHECK CHỮ KÝ QR GỐC
+            $qrDataStr = $request->input('qr_data');
+            if (!$qrDataStr) {
+                return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Missing QR Data'], 400);
+            }
+
+            $qrData = is_string($qrDataStr) ? json_decode($qrDataStr, true) : $qrDataStr;
+            if (!$qrData || !isset($qrData['payload']) || !isset($qrData['sig'])) {
+                return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Invalid QR Data format'], 400);
+            }
+
+            $payload = $qrData['payload'];
+            $signature = $qrData['sig'];
+
+            $expectedSignature = hash_hmac('sha256', json_encode($payload), env('QR_SECRET_KEY', 'secret'));
+            if (!hash_equals($expectedSignature, $signature)) {
+                return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Signature mismatch'], 400);
+            }
+
+            $bookingId = $payload['booking_id'] ?? null;
         }
 
-        $qrData = is_string($qrDataStr) ? json_decode($qrDataStr, true) : $qrDataStr;
-        if (!$qrData || !isset($qrData['payload']) || !isset($qrData['sig'])) {
-            return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Invalid QR Data format'], 400);
-        }
-
-        $payload = $qrData['payload'];
-        $signature = $qrData['sig'];
-
-        $expectedSignature = hash_hmac('sha256', json_encode($payload), env('QR_SECRET_KEY', 'secret'));
-        if (!hash_equals($expectedSignature, $signature)) {
-            return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Signature mismatch'], 400);
-        }
-
-        $bookingId = $payload['booking_id'] ?? null;
+        // =========================================================================
+        // PHẦN LOGIC KIỂM TRA NGHIỆP VỤ VÀ ĐỔI TRẠNG THÁI VÉ (GIỮ NGUYÊN 100%)
+        // =========================================================================
         if (!$bookingId) {
-            return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Invalid booking ID in QR'], 400);
+            return response()->json(['error_code' => 'INVALID_QR_SIGNATURE', 'message' => 'Invalid booking ID'], 400);
         }
 
         $booking = Booking::with(['showtime.movie', 'bookingSeats.showtimeSeat.seat'])->find($bookingId);
@@ -44,7 +54,7 @@ class CheckinController extends Controller
 
         if ($booking->is_checked_in) {
             return response()->json([
-                'error_code' => 'TICKET_ALREADY_CHECKED_IN', 
+                'error_code' => 'TICKET_ALREADY_CHECKED_IN',
                 'message' => 'Vé đã được check-in trước đó',
                 'checked_in_at' => $booking->checked_in_at
             ], 422);

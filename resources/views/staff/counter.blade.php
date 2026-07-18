@@ -11,6 +11,18 @@
                         class="mt-1 border-gray-300 rounded-md shadow-sm p-3 text-lg" onchange="this.form.submit()">
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Lọc theo phim</label>
+                    <select name="movie_id" class="mt-1 border-gray-300 rounded-md shadow-sm p-3 text-lg" onchange="this.form.submit()">
+                        <option value="">-- Tất cả phim --</option>
+                        @foreach($movies as $mv)
+                            <option value="{{ $mv->id }}" {{ request('movie_id') == $mv->id ? 'selected' : '' }}>
+                                {{ $mv->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <div class="flex-grow">
                     <label class="block text-sm font-medium text-gray-700">Suất chiếu</label>
                     <select name="showtime_id" class="mt-1 border-gray-300 rounded-md shadow-sm w-full p-3 text-lg"
@@ -296,7 +308,7 @@
                                 const idempotencyKey = crypto.randomUUID();
 
                                 try {
-                                    const response = await fetch('/api/staff/bookings/counter', {
+                                    const response = await fetch('/staff/bookings/counter', {
                                         method: 'POST',
                                         credentials: 'same-origin',
                                         headers: {
@@ -389,7 +401,7 @@
                                 this.error = null;
 
                                 try {
-                                    const response = await fetch(`/api/staff/bookings/${this.ticketData.id}/cancel`, {
+                                    const response = await fetch(`/staff/bookings/${this.ticketData.id}/cancel`, {
                                         method: 'POST',
                                         credentials: 'same-origin',
                                         headers: {

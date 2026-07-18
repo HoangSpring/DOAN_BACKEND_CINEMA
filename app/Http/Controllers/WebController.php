@@ -11,25 +11,42 @@ class WebController extends Controller
 {
     public function index(Request $request)
     {
-        $validStatuses = ['showing', 'coming_soon'];
-        $status = in_array($request->query('status'), $validStatuses) ? $request->query('status') : 'showing';
+        $validStatuses = ['all', 'showing', 'coming_soon'];
+        $status = in_array($request->query('status'), $validStatuses) ? $request->query('status') : 'all';
 
-        $query = Movie::with(['tags', 'showtimes' => function ($q) {
-            $q->where('start_time', '>=', now())->orderBy('start_time');
-        }])->where('status', $status);
+        $showingMovies = collect();
+        $comingSoonMovies = collect();
         
+        $queryShowing = Movie::with(['tags', 'showtimes' => function ($q) {
+            $q->where('start_time', '>=', now()->subMinutes(30))->orderBy('start_time');
+        }])->where('status', 'showing');
+        
+        $queryComingSoon = Movie::with(['tags', 'showtimes' => function ($q) {
+            $q->where('start_time', '>=', now()->subMinutes(30))->orderBy('start_time');
+        }])->where('status', 'coming_soon');
+
         if ($request->has('tags') && !empty($request->tags)) {
             $tagSlugs = explode(',', $request->tags);
-            $query->whereHas('tags', function ($q) use ($tagSlugs) {
+            $queryShowing->whereHas('tags', function ($q) use ($tagSlugs) {
+                $q->whereIn('slug', $tagSlugs);
+            });
+            $queryComingSoon->whereHas('tags', function ($q) use ($tagSlugs) {
                 $q->whereIn('slug', $tagSlugs);
             });
         }
         
-        $movies = $query->get();
-        $tags = Tag::all();
-        $featuredMovies = $movies->take(3);
+        if ($status === 'all' || $status === 'showing') {
+            $showingMovies = $queryShowing->get();
+        }
         
-        return view('pages.home', compact('movies', 'tags', 'featuredMovies', 'status'));
+        if ($status === 'all' || $status === 'coming_soon') {
+            $comingSoonMovies = $queryComingSoon->get();
+        }
+        
+        $tags = Tag::all();
+        $featuredMovies = $showingMovies->isNotEmpty() ? $showingMovies->take(4) : $comingSoonMovies->take(4);
+        
+        return view('pages.home', compact('showingMovies', 'comingSoonMovies', 'tags', 'featuredMovies', 'status'));
     }
 
     public function showMovie($id)
@@ -135,13 +152,13 @@ class WebController extends Controller
     public function registerSubmit(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         $user = \App\Models\User::create([
-            'name' => $data['name'],
+            'full_name' => $data['full_name'],
             'email' => $data['email'],
             'password' => \Illuminate\Support\Facades\Hash::make($data['password']),
             'role' => 'customer',
@@ -172,5 +189,35 @@ class WebController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         return view('pages.my-tickets', compact('bookings'));
+    }
+
+    public function profile()
+    {
+        $user = auth()->user();
+        return view('pages.profile', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        
+        $data = $request->validate([
+            'full_name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'email' => ['required', 'string', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users')->ignore($user->id)],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user->full_name = $data['full_name'];
+        $user->phone = $data['phone'];
+        $user->email = $data['email'];
+        
+        if (!empty($data['password'])) {
+            $user->password = \Illuminate\Support\Facades\Hash::make($data['password']);
+        }
+        
+        $user->save();
+        
+        return back()->with('success', 'Cập nhật thông tin tài khoản thành công!');
     }
 }

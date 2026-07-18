@@ -16,6 +16,7 @@ class Showtime extends Model
         'end_time',
         'price_standard',
         'price_vip',
+        'price_couple',
         'status',
     ];
 
@@ -26,6 +27,7 @@ class Showtime extends Model
             'end_time' => 'datetime',
             'price_standard' => 'decimal:2',
             'price_vip' => 'decimal:2',
+            'price_couple' => 'decimal:2',
         ];
     }
 

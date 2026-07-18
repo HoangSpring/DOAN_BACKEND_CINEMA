@@ -68,6 +68,14 @@
                         required min="0" step="1000">
                     @error('price_vip') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700">Giá ghế Couple (VNĐ)</label>
+                    <input type="number" name="price_couple" value="{{ old('price_couple', 150000) }}"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+                        required min="0" step="1000">
+                    @error('price_couple') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
             </div>
 
             <div class="mt-8 border-t pt-6">

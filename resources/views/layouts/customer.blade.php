@@ -77,9 +77,11 @@
                         x-transition:enter-start="transform opacity-0 scale-95"
                         x-transition:enter-end="transform opacity-100 scale-100">
                         <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                            Tài khoản: {{ auth()->user()->name }}
+                            Tài khoản: {{ auth()->user()->full_name }}
                         </div>
                         <div class="h-px bg-dark-border my-1"></div>
+                        <a href="{{ route('profile') }}"
+                            class="block rounded-xl px-3 py-2 text-sm text-slate-200 hover:bg-black/40 hover:text-primary transition">Thông tin tài khoản</a>
                         @if(auth()->user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}"
                                 class="block rounded-xl px-3 py-2 text-sm text-slate-200 hover:bg-black/40 hover:text-primary transition">Trang

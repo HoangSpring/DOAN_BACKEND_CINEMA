@@ -13,12 +13,23 @@ class StaffController extends Controller
     public function counter(Request $request)
     {
         $date = $request->query('date', Carbon::today()->toDateString());
+        $movieId = $request->query('movie_id');
         
-        $showtimes = Showtime::with(['movie', 'room'])
+        $query = Showtime::with(['movie', 'room'])
             ->whereDate('start_time', $date)
-            ->where('status', 'scheduled')
-            ->orderBy('start_time', 'asc')
-            ->get();
+            ->where('status', 'scheduled');
+
+        // Luôn loại bỏ tất cả các suất chiếu đã qua hơn 30 phút (chặn luôn cả ngày hôm qua)
+        $query->where('start_time', '>=', Carbon::now()->subMinutes(30));
+
+        if ($movieId) {
+            $query->where('movie_id', $movieId);
+        }
+            
+        $showtimes = $query->orderBy('start_time', 'asc')->get();
+
+        // Lấy tất cả các phim (kể cả đã hết suất) để hiển thị vào bộ lọc dropdown
+        $movies = Movie::orderBy('title', 'asc')->get();
             
         $showtimeId = $request->query('showtime_id');
         $selectedShowtime = null;
@@ -52,7 +63,7 @@ class StaffController extends Controller
                 });
         }
         
-        return view('staff.counter', compact('date', 'showtimes', 'selectedShowtime', 'seats'));
+        return view('staff.counter', compact('date', 'showtimes', 'selectedShowtime', 'seats', 'movies'));
     }
 
     public function checkin()

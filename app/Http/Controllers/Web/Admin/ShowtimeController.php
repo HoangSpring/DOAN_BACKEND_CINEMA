@@ -35,7 +35,7 @@ class ShowtimeController extends Controller
 
     public function create()
     {
-        $movies = Movie::where('status', 'showing')->get();
+        $movies = Movie::whereIn('status', ['showing', 'coming_soon'])->get();
         $rooms = Room::all();
         return view('admin.showtimes.create', compact('movies', 'rooms'));
     }
@@ -48,6 +48,7 @@ class ShowtimeController extends Controller
             'start_time' => 'required|date|after:now',
             'price_standard' => 'required|numeric|min:0',
             'price_vip' => 'required|numeric|min:0',
+            'price_couple' => 'required|numeric|min:0',
         ]);
 
         $movie = Movie::findOrFail($data['movie_id']);
@@ -81,6 +82,7 @@ class ShowtimeController extends Controller
                 'end_time' => $endTime,
                 'price_standard' => $data['price_standard'],
                 'price_vip' => $data['price_vip'],
+                'price_couple' => $data['price_couple'],
                 'status' => 'scheduled'
             ]);
 

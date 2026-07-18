@@ -135,7 +135,7 @@
                         const idempotencyKey = crypto.randomUUID();
 
                         // 2. Gọi chính xác Endpoint checkout của BookingController qua phương thức POST
-                        const response = await fetch(`/api/bookings/${this.bookingId}/checkout`, {
+                        const response = await fetch(`/bookings/${this.bookingId}/checkout`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

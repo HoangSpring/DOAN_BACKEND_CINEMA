@@ -43,6 +43,7 @@ class AdminShowtimeController extends Controller
                     'end_time' => $endTime,
                     'price_standard' => $data['price_standard'],
                     'price_vip' => $data['price_vip'],
+                    'price_couple' => $data['price_couple'],
                     'status' => 'scheduled',
                 ]);
 
