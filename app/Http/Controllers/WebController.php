@@ -16,14 +16,20 @@ class WebController extends Controller
 
         $showingMovies = collect();
         $comingSoonMovies = collect();
-        
-        $queryShowing = Movie::with(['tags', 'showtimes' => function ($q) {
-            $q->where('start_time', '>=', now()->subMinutes(30))->orderBy('start_time');
-        }])->where('status', 'showing');
-        
-        $queryComingSoon = Movie::with(['tags', 'showtimes' => function ($q) {
-            $q->where('start_time', '>=', now()->subMinutes(30))->orderBy('start_time');
-        }])->where('status', 'coming_soon');
+
+        $queryShowing = Movie::with([
+            'tags',
+            'showtimes' => function ($q) {
+                $q->where('start_time', '>=', now()->subMinutes(30))->orderBy('start_time');
+            }
+        ])->where('status', 'showing');
+
+        $queryComingSoon = Movie::with([
+            'tags',
+            'showtimes' => function ($q) {
+                $q->where('start_time', '>=', now()->subMinutes(30))->orderBy('start_time');
+            }
+        ])->where('status', 'coming_soon');
 
         if ($request->has('tags') && !empty($request->tags)) {
             $tagSlugs = explode(',', $request->tags);
@@ -34,39 +40,39 @@ class WebController extends Controller
                 $q->whereIn('slug', $tagSlugs);
             });
         }
-        
+
         if ($status === 'all' || $status === 'showing') {
             $showingMovies = $queryShowing->get();
         }
-        
+
         if ($status === 'all' || $status === 'coming_soon') {
             $comingSoonMovies = $queryComingSoon->get();
         }
-        
+
         $tags = Tag::all();
         $featuredMovies = $showingMovies->isNotEmpty() ? $showingMovies->take(4) : $comingSoonMovies->take(4);
-        
+
         return view('pages.home', compact('showingMovies', 'comingSoonMovies', 'tags', 'featuredMovies', 'status'));
     }
 
     public function showMovie($id)
     {
         $movie = Movie::with('tags')->findOrFail($id);
-        
+
         // Next 7 days
         $dates = collect();
         for ($i = 0; $i < 7; $i++) {
             $dates->push(now()->addDays($i)->format('Y-m-d'));
         }
-        
+
         $selectedDate = request('date', now()->format('Y-m-d'));
-        
+
         $showtimes = Showtime::with('room')
             ->where('movie_id', $id)
             ->whereDate('start_time', $selectedDate)
             ->orderBy('start_time')
             ->get();
-            
+
         return view('pages.movie-details', compact('movie', 'dates', 'selectedDate', 'showtimes'));
     }
 
@@ -82,7 +88,7 @@ class WebController extends Controller
         $seats = \App\Models\ShowtimeSeat::with('seat')
             ->where('showtime_id', $showtimeId)
             ->get();
-            
+
         // Map data appropriately for the frontend
         $mapped = $seats->map(function ($ss) {
             $status = $ss->status;
@@ -105,7 +111,7 @@ class WebController extends Controller
                 'price' => $seatType === 'vip' ? $ss->showtime->price_vip : $ss->showtime->price_standard,
             ];
         });
-        
+
         return response()->json(['data' => $mapped]);
     }
 
@@ -200,7 +206,7 @@ class WebController extends Controller
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
-        
+
         $data = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
@@ -211,13 +217,13 @@ class WebController extends Controller
         $user->full_name = $data['full_name'];
         $user->phone = $data['phone'];
         $user->email = $data['email'];
-        
+
         if (!empty($data['password'])) {
             $user->password = \Illuminate\Support\Facades\Hash::make($data['password']);
         }
-        
+
         $user->save();
-        
+
         return back()->with('success', 'Cập nhật thông tin tài khoản thành công!');
     }
 }
