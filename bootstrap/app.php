@@ -12,10 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        \App\Console\Commands\GenerateDailyShowtimes::class,
+    ])
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
 
-        // Ép các route có tiền tố api/ luôn luôn chạy qua các middleware xử lý stateless API
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);

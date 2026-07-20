@@ -43,6 +43,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('rooms', \App\Http\Controllers\Web\Admin\RoomController::class)->only(['index', 'show']);
     Route::put('rooms/{room}/seats/{seat}', [\App\Http\Controllers\Web\Admin\RoomController::class, 'updateSeat'])->name('rooms.update-seat');
     Route::resource('showtimes', \App\Http\Controllers\Web\Admin\ShowtimeController::class)->only(['index', 'create', 'store']);
+    Route::post('showtimes/auto-generate', [\App\Http\Controllers\Admin\AdminShowtimeController::class, 'autoGenerate'])->name('showtimes.auto-generate');
 });
 
 // Staff Web Routes (Prompt 18)

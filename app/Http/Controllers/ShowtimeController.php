@@ -18,7 +18,7 @@ class ShowtimeController extends Controller
             $date = $request->query('date');
             $query->whereDate('start_time', $date);
         }
-        
+
         // Luôn giới hạn không lấy các suất chiếu đã trôi qua hơn 30 phút (kể cả chọn ngày cũ)
         $query->where('start_time', '>=', now()->subMinutes(30));
 

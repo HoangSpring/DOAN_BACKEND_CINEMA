@@ -65,8 +65,8 @@
                             <button @click="switchTo(i)"
                                 class="text-xs sm:text-sm pb-1 border-b transition-all duration-300 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
                                 :class="active === i
-                                                    ? 'text-primary border-primary opacity-100 font-medium'
-                                                    : 'text-white/70 border-transparent hover:text-white'"
+                                                                    ? 'text-primary border-primary opacity-100 font-medium'
+                                                                    : 'text-white/70 border-transparent hover:text-white'"
                                 x-text="movie.title"></button>
                         </template>
                     </div>
@@ -174,9 +174,9 @@
                                     class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
                                 </div>
 
-                                {{-- Poster bên trái --}}
+                                {{-- Poster bên trái - TO HƠN + self-start để không bị giãn --}}
                                 <a href="{{ route('movies.show', $movie->id) }}"
-                                    class="shrink-0 w-48 sm:w-56 md:w-60 overflow-hidden rounded-xl bg-black aspect-[2/3] shadow-lg relative group/poster">
+                                    class="shrink-0 self-start w-52 sm:w-60 md:w-64 lg:w-72 overflow-hidden rounded-xl bg-black aspect-[2/3] shadow-lg relative group/poster">
                                     <img src="{{ $movie->poster_url ?? 'https://picsum.photos/seed/' . $movie->id . '/760/1080' }}"
                                         alt="{{ $movie->title }}"
                                         class="w-full h-full object-cover transition duration-700 group-hover/poster:scale-110">
